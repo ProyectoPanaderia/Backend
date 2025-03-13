@@ -1,5 +1,4 @@
-// src/infrastructure/http/controllers/userController.js
-const { User } = require("../../database/models");
+const { User } = require("../../database/models/models");
 
 exports.getUsers = async (req, res) => {
   try {
