@@ -16,4 +16,4 @@ const Ciudad = sequelize.define('Ciudad', {
     timestamps: false,
 });
 
-moedules.exports = Ciudad;
+module.exports = Ciudad;

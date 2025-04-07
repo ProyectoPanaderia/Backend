@@ -16,4 +16,4 @@ const Vehiculo = sequelize.define('Vehiculo', {
     timestamps: false,
 });
 
-moedule.exports = Vehiculo;
+module.exports = Vehiculo;

@@ -24,4 +24,4 @@ const Cliente = sequelize.define('Cliente', {
     timestamps: false,
 });
 
-model.exports = Cliente;
+module.exports = Cliente;

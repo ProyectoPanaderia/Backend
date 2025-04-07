@@ -28,4 +28,4 @@ const Empleado = sequelize.define('Empleado', {
     timestamps: false,
 });
 
-modules.exports = Empleado;
+module.exports = Empleado;

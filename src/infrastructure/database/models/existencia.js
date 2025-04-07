@@ -48,4 +48,4 @@ const Existencia = sequelize.define('Existencia', {
     timestamps: false,
 });
 
-modules.exports = Existencia;
+module.exports = Existencia;

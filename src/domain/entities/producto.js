@@ -1,2 +1,13 @@
+class Producto {
+  constructor(id, nombre, peso) {
+    if (id == null || !nombre || peso == null) {
+      throw new Error("Todos los campos son obligatorios");
+    }
 
-//Esta es la entidad producto, que representa un producto en el sistema de inventario.
+    this.id = id;
+    this.nombre = nombre;
+    this.peso = peso;
+  }
+}
+
+module.exports = Producto;
