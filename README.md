@@ -1,5 +1,5 @@
 # Backend
-Este repositorio contiene el Backend del proyecto Sistema de Gestión Panadería "Santa Anita"
+Este repositorio contiene el Backend del proyecto Sistema de Gestión Panadería "Santa Anita".
 
 Dependencias:
 node.js 22.14.0

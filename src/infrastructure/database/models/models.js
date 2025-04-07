@@ -18,7 +18,6 @@ const Devolucion = require("./devolucion");
 const RepartoEmpleado = require("./repartoEmpleado");
 const RepartoVehiculo = require("./repartoVehiculo");
 
-// Definir relaciones
 
 // Producto 1 -> * Existencia
 Producto.hasMany(Existencia, { foreignKey: "productoId" });

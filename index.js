@@ -6,7 +6,7 @@ const app = express();
 app.use(express.json());
 app.use("/api", userRoutes);
 
-// Sincroniza la base de datos y luego inicia el servidor
+// Sincroniza la base de datos y luego se inicia el servidor
 sequelize.sync({ force: false })  // O `true` si querés que borre y recree las tablas
     .then(() => {
         console.log("🟢 Base de datos sincronizada");
