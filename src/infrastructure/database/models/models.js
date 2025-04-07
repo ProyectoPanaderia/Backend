@@ -7,6 +7,8 @@ const sequelize = new Sequelize("panaderia_db", "root", "", {
 
 const User = require("./user")(sequelize, DataTypes);
 
+//Acá van las relaciones entre los modelos
+
 module.exports = {
     sequelize,
     User
