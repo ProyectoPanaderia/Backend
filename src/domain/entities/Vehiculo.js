@@ -5,7 +5,7 @@ class Vehiculo {
       }
   
       this.id = id;
-      this.patente = patente;
+      this.matricula = matricula;
       this.repartoVehiculoId = repartoVehiculoId;
     }
   }
