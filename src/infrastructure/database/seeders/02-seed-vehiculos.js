@@ -3,9 +3,9 @@
 module.exports = {
   up: async (queryInterface, Sequelize) => {
     await queryInterface.bulkInsert('vehiculos', [
-      { matricula: 'ABC123' },
-      { matricula: 'DEF456' },
-      { matricula: 'GHI789' },
+      { id:1, matricula: 'ABC123' },
+      { id:2, matricula: 'DEF456' },
+      { id:3, matricula: 'GHI789' },
     ]);
   },
   down: async (queryInterface, Sequelize) => {

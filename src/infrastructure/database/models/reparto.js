@@ -7,7 +7,7 @@ const Reparto = sequelize.define('Reparto', {
         primaryKey: true,
         autoIncrement: true,
     },
-    tercializado: {
+    tercearizado: {
         type: DataTypes.CHAR(1),
         allowNull: false,
     },

@@ -57,15 +57,15 @@ Cliente.belongsTo(Ciudad, { foreignKey: "ciudadId" });
 
 // Reparto * -> * Empleado (con clase intermedia)
 Reparto.hasMany(RepartoEmpleado, { foreignKey: "repartoId" });
-Empleado.hasMany(RepartoEmpleado, { foreignKey: "repartoId" });
+Empleado.hasMany(RepartoEmpleado, { foreignKey: "empleadoId" });
 RepartoEmpleado.belongsTo(Reparto, { foreignKey: "repartoId" });
 RepartoEmpleado.belongsTo(Empleado, { foreignKey: "empleadoId" });
 
 // Reparto * -> * Vehiculo (con clase intermedia)
 Reparto.hasMany(RepartoVehiculo, { foreignKey: "repartoId" });
-Vehiculo.hasMany(RepartoVehiculo, { foreignKey: "repartoId" });
+Vehiculo.hasMany(RepartoVehiculo, { foreignKey: "vehiculoId" });
 RepartoVehiculo.belongsTo(Reparto, { foreignKey: "repartoId" });
-RepartoVehiculo.belongsTo(Vehiculo, { foreignKey: "empleadoId" });
+RepartoVehiculo.belongsTo(Vehiculo, { foreignKey: "vehiculoId" });
 
 // Reparto 1 -> * Devolucion
 Reparto.hasMany(Devolucion, { foreignKey: "repartoId" });
