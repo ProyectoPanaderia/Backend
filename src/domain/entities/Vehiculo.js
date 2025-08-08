@@ -1,12 +1,11 @@
 class Vehiculo {
-    constructor(id, patente, repartoVehiculoId) {
-      if (id == null || !patente || repartoVehiculoId == null) {
+    constructor(id, matricula) {
+      if (id == null || !matricula ) {
         throw new Error("Todos los campos son obligatorios");
       }
   
       this.id = id;
       this.matricula = matricula;
-      this.repartoVehiculoId = repartoVehiculoId;
     }
   }
   

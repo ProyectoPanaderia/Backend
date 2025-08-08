@@ -3,8 +3,8 @@
 module.exports = {
   up: async (queryInterface, Sequelize) => {
     await queryInterface.bulkInsert('ciudades', [
-      { id: 1, nombre: 'Santa Fe' },
-      { id: 2, nombre: 'Rosario' }
+      { id: 1, nombre: 'Basavilbaso' },
+      { id: 2, nombre: 'Concepción del Uruguay' }
     ]);
   },
 

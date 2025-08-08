@@ -7,7 +7,7 @@ app.use(express.json());
 app.use("/api", userRoutes);
 
 // Sincroniza la base de datos y luego se inicia el servidor
-sequelize.sync({ force: false })  // O `true` si querés que borre y recree las tablas
+sequelize.sync({ force: true })  // O `true` si querés que borre y recree las tablas
     .then(() => {
         console.log("🟢 Base de datos sincronizada");
         const PORT = process.env.PORT || 3000;

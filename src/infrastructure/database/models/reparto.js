@@ -7,7 +7,7 @@ const Reparto = sequelize.define('Reparto', {
         primaryKey: true,
         autoIncrement: true,
     },
-    tercearizado: {
+    tercerizado: {
         type: DataTypes.CHAR(1),
         allowNull: false,
     },
@@ -19,10 +19,6 @@ const Reparto = sequelize.define('Reparto', {
         type: DataTypes.CHAR(1),
         allowNull: false,
     }, 
-    existencia: {
-        type: DataTypes.INTEGER,
-        allowNull: false,
-    },
 }, {
     tableName: 'repartos',
     timestamps: false,
