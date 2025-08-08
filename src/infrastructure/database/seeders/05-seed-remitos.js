@@ -23,3 +23,4 @@ module.exports = {
     await queryInterface.bulkDelete('remitos', null, {});
   }
 };
+ 

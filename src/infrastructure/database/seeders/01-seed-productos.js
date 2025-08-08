@@ -3,11 +3,11 @@
 module.exports = {
   up: async (queryInterface, Sequelize) => {
     await queryInterface.bulkInsert('productos', [
-  { id: 1, nombre: 'Pan flauta', peso: 500 },
-  { id: 2, nombre: 'Pan francés', peso: 400 },
-  { id: 3, nombre: 'Criollitos', peso: 300 },
-  { id: 4, nombre: 'Chipá', peso: 250 },
-  { id: 5, nombre: 'Medialunas', peso: 200 },
+  { id: 1, nombre: 'Panchos', peso: 500 },
+  { id: 2, nombre: 'Viena', peso: 500 },
+  { id: 3, nombre: 'Lactal integral', peso: 260 },
+  { id: 4, nombre: 'Miga', peso: 250 },
+  { id: 5, nombre: 'Lactal chico', peso: 200 },
 ]);
   },
   down: async (queryInterface, Sequelize) => {

@@ -7,7 +7,7 @@ module.exports = {
         repartoId: 1,
         lineaRemitoId: 1,
         fechaE: new Date('2025-08-01'),
-        fechaV: new Date('2025-08-10')
+        fechaV: new Date('2027-08-10')
       },
       {
         cantidad: 80,
@@ -15,7 +15,7 @@ module.exports = {
         repartoId: 1,
         lineaRemitoId: 1,
         fechaE: new Date('2025-08-01'),
-        fechaV: new Date('2025-08-10')
+        fechaV: new Date('2027-08-10')
       },
       {
         cantidad: 60,
@@ -23,7 +23,7 @@ module.exports = {
         repartoId: 2,
         lineaRemitoId: 2,
         fechaE: new Date('2025-08-01'),
-        fechaV: new Date('2025-08-10')
+        fechaV: new Date('2027-08-10')
       },
       {
         cantidad: 50,
@@ -31,7 +31,7 @@ module.exports = {
         repartoId: 3,
         lineaRemitoId: 3,
         fechaE: new Date('2025-08-01'),
-        fechaV: new Date('2025-08-10')
+        fechaV: new Date('2027-08-10')
       },
     ]);
   },
