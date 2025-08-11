@@ -6,7 +6,7 @@ module.exports = {
         productoId: 1,
         repartoId: 1,
         lineaRemitoId: 1,
-        fechaE: new Date('2025-08-01'),
+        fechaE: new Date('2027-08-01'),
         fechaV: new Date('2027-08-10')
       },
       {
@@ -14,7 +14,7 @@ module.exports = {
         productoId: 2,
         repartoId: 1,
         lineaRemitoId: 1,
-        fechaE: new Date('2025-08-01'),
+        fechaE: new Date('2027-08-01'),
         fechaV: new Date('2027-08-10')
       },
       {
@@ -22,7 +22,7 @@ module.exports = {
         productoId: 3,
         repartoId: 2,
         lineaRemitoId: 2,
-        fechaE: new Date('2025-08-01'),
+        fechaE: new Date('2027-08-01'),
         fechaV: new Date('2027-08-10')
       },
       {

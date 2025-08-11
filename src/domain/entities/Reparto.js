@@ -1,6 +1,6 @@
 class Reparto {
-  constructor(id, tercerizado, nombre, estado, repartoempleadoId, repartoVehiculoId) {
-    if (id == null || tercerizado == null || !nombre || estado == null ) {
+  constructor(id, tercerizado, nombre, estado) {
+    if (id == null || tercerizado == null || !nombre || estado == null) {
       throw new Error("Todos los campos son obligatorios");
     }
 
@@ -8,7 +8,6 @@ class Reparto {
     this.tercerizado = tercerizado;
     this.nombre = nombre;
     this.estado = estado;
-
   }
 }
 
