@@ -1,18 +1,29 @@
+
+//este index lo hice para probar el controller y el service
 const express = require("express");
-const userRoutes = require("./src/infrastructure/http/routes/userRoutes");
-const { sequelize } = require("./src/infrastructure/database/models/models");
+const bodyParser = require("body-parser");
+
+// Tu AppService falso (mock)
+const productoAppService = {
+  async crearProducto(dto) {
+    return { id: 1, ...dto }; // simula insert
+  },
+  async obtenerProductos({ limit, offset }) {
+    return [
+      { id: 1, nombre: "Pan", peso: 500 },
+      { id: 2, nombre: "Bizcocho", peso: 200 }
+    ];
+  }
+};
+
+const ProductoController = require("./src/interfaces/controllers/ProductoController");
+const productoController = new ProductoController(productoAppService);
 
 const app = express();
-app.use(express.json());
-app.use("/api", userRoutes);
+app.use(bodyParser.json());
 
-// Sincroniza la base de datos y luego se inicia el servidor
-sequelize.sync({ force: true })  // O `true` si querés que borre y recree las tablas
-    .then(() => {
-        console.log("🟢 Base de datos sincronizada");
-        const PORT = process.env.PORT || 3000;
-        app.listen(PORT, () => console.log(`🚀 Servidor en http://localhost:${PORT}`));
-    })
-    .catch(error => {
-        console.error("❌ Error al sincronizar la base de datos:", error);
-    });
+// Rutas
+app.post("/productos", productoController.crearProducto);
+app.get("/productos", productoController.obtenerProductos);
+
+app.listen(3000, () => console.log("Servidor en http://localhost:3000"));
