@@ -1,29 +1,44 @@
+// index.js
+const express = require('express');
+const bodyParser = require('body-parser');
 
-//este index lo hice para probar el controller y el service
-const express = require("express");
-const bodyParser = require("body-parser");
+// 1) Infra: modelos + repo
+const { sequelize } = require('./src/infrastructure/database/models/models.js'); // tu index que exporta sequelize
+const ProductoRepositorySequelize = require('./src/infrastructure/database/repositories/ProductoRepositorySequelize');
 
-// Tu AppService falso (mock)
-const productoAppService = {
-  async crearProducto(dto) {
-    return { id: 1, ...dto }; // simula insert
-  },
-  async obtenerProductos({ limit, offset }) {
-    return [
-      { id: 1, nombre: "Pan", peso: 500 },
-      { id: 2, nombre: "Bizcocho", peso: 200 }
-    ];
-  }
-};
+// 2) App service
+const ProductoAppService = require('./src/application/services/ProductoAppService');
 
-const ProductoController = require("./src/interfaces/controllers/ProductoController");
-const productoController = new ProductoController(productoAppService);
+// 3) Controller
+const ProductoController = require('./src/interfaces/controllers/ProductoController');
 
-const app = express();
-app.use(bodyParser.json());
+async function bootstrap() {
+  // Probar conexión BD (opcional pero útil)
+  await sequelize.authenticate();
+  console.log('✅ Conectado a la BD');
 
-// Rutas
-app.post("/productos", productoController.crearProducto);
-app.get("/productos", productoController.obtenerProductos);
+  const repo = new ProductoRepositorySequelize();
+  const service = new ProductoAppService(repo);
+  const controller = new ProductoController(service);
 
-app.listen(3000, () => console.log("Servidor en http://localhost:3000"));
+  const app = express();
+  app.use(bodyParser.json());
+
+  // Rutas reales contra BD
+  app.get('/productos', controller.obtenerProductos);
+  app.post('/productos', controller.crearProducto);
+
+  // Middleware de errores (último)
+  app.use((err, req, res, next) => {
+    console.error(err);
+    res.status(err.status ?? 500).json({ error: err.message ?? 'Error interno' });
+  });
+
+  const PORT = process.env.PORT || 3000;
+  app.listen(PORT, () => console.log(`🚀 http://localhost:${PORT}`));
+}
+
+bootstrap().catch(err => {
+  console.error('❌ No se pudo iniciar la app:', err);
+  process.exit(1);
+});
