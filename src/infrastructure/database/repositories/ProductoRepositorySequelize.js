@@ -1,4 +1,4 @@
-const { Producto } = require('../models/models');
+const { Producto } = require('../models/models.js');
 const ProductoRepository = require('../../../domain/repositories/productoRepository');
 
 class ProductoRepositorySequelize extends ProductoRepository {
@@ -6,8 +6,12 @@ class ProductoRepositorySequelize extends ProductoRepository {
     return await Producto.create(data);
   }
   
-  async findAll() {
-    return await Producto.findAll();
+  async findAll(filter) {
+    const rows = await Producto.findAll(); // ✅ usar el import directo
+    return {
+      data: rows,
+      meta: { total: rows.length }
+    };
   }
 
   async findById(id) {

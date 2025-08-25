@@ -1,23 +1,41 @@
-const ProductoDTO = require('../dtos/ProductoDTO');
+const CreateProductoDTO = require('../dtos/ProductoDTO/CreateProductoDTO');
+const UpdateProductoDTO = require('../dtos/ProductoDTO/UpdateProductoDTO');
+const ProductoFilterDTO = require('../dtos/ProductoDTO/ProductoFilterDTO');
+const productoDTO = require('../dtos/ProductoDTO/ProductoDTO');
 
 class ProductoAppService {
-  constructor(productoRepository) {
-    this.productoRepository = productoRepository;
+  constructor({ productoRepo }) { this.productoRepo = productoRepo; }
+
+  async crear(payload) {
+    const dto = new CreateProductoDTO(payload);
+    const created = await this.productoRepo.create(dto);
+    return { data: productoDTO(created) };
   }
 
-  async crearProducto(dto) {
-    // Validaciones de negocio, transformación de DTO a entidad, etc.
-    // Puede lanzar errores de dominio
-    
-    const producto = await this.productoRepository.create(dto);
-    return new ProductoDTO(producto);
+  async listar(query) {
+    const filter = new ProductoFilterDTO(query);
+    const result = await this.productoRepo.findAll(filter);
+    return { data: result.data.map(productoDTO), meta: result.meta };
   }
 
-  async obtenerProductos() {
-    const productos = await this.productoRepository.findAll();
-    return productos.map(p => new ProductoDTO(p));
+  async obtener(id) {
+    const prod = await this.productoRepo.findById(Number(id));
+    if (!prod) throw new Error('Producto no encontrado');
+    return { data: productoDTO(prod) };
   }
 
-  // Otros métodos: actualizar, eliminar, etc.
+  async editar(id, payload) {
+    const dto = new UpdateProductoDTO(payload);
+    const updated = await this.productoRepo.update(Number(id), dto);
+    if (!updated) throw new Error('Producto no encontrado');
+    return { data: productoDTO(updated) };
+  }
+
+  async eliminar(id) {
+    const ok = await this.productoRepo.delete(Number(id));
+    if (!ok) throw new Error('Producto no encontrado');
+    return { data: { ok: true } };
+  }
 }
+
 module.exports = ProductoAppService;

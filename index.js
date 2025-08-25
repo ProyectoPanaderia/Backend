@@ -1,44 +1,39 @@
-// index.js
 const express = require('express');
-const bodyParser = require('body-parser');
+const { sequelize } = require('./src/infrastructure/database/models/models');
 
-// 1) Infra: modelos + repo
-const { sequelize } = require('./src/infrastructure/database/models/models.js'); // tu index que exporta sequelize
 const ProductoRepositorySequelize = require('./src/infrastructure/database/repositories/ProductoRepositorySequelize');
-
-// 2) App service
 const ProductoAppService = require('./src/application/services/ProductoAppService');
-
-// 3) Controller
-const ProductoController = require('./src/interfaces/controllers/ProductoController');
+const productosRoutesFactory = require('./src/infrastructure/http/routes/productos.js'); // ← factory
 
 async function bootstrap() {
-  // Probar conexión BD (opcional pero útil)
-  await sequelize.authenticate();
-  console.log('✅ Conectado a la BD');
+  try {
+    await sequelize.authenticate();
+    console.log('✅ Conectado a la BD');
 
-  const repo = new ProductoRepositorySequelize();
-  const service = new ProductoAppService(repo);
-  const controller = new ProductoController(service);
+    const app = express();
+    app.use(express.json());
 
-  const app = express();
-  app.use(bodyParser.json());
+    // DI
+    const productoRepo = new ProductoRepositorySequelize();
+    const productoAppService = new ProductoAppService({ productoRepo });
 
-  // Rutas reales contra BD
-  app.get('/productos', controller.obtenerProductos);
-  app.post('/productos', controller.crearProducto);
+    // Rutas (SOLO factory; NO instancie el controller acá)
+    app.use('/productos', productosRoutesFactory({ productoAppService }));
 
-  // Middleware de errores (último)
-  app.use((err, req, res, next) => {
-    console.error(err);
-    res.status(err.status ?? 500).json({ error: err.message ?? 'Error interno' });
-  });
+    // Healthcheck
+    app.get('/health', (req, res) => res.send('ok'));
 
-  const PORT = process.env.PORT || 3000;
-  app.listen(PORT, () => console.log(`🚀 http://localhost:${PORT}`));
+    // Error handler (siempre al final)
+    app.use((err, req, res, next) => {
+      console.error(err);
+      const status = err.statusCode || 500;
+      res.status(status).json({ errors: [err.message] });
+    });
+
+    app.listen(3000, () => console.log('🚀 API en :3000'));
+  } catch (err) {
+    console.error('❌ No se pudo iniciar la app:', err);
+  }
 }
 
-bootstrap().catch(err => {
-  console.error('❌ No se pudo iniciar la app:', err);
-  process.exit(1);
-});
+bootstrap();
