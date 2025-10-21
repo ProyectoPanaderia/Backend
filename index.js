@@ -16,11 +16,13 @@ async function bootstrap() {
     
     // CORS para que el front pueda modificar cosas hacia el back
     app.use(cors({
-      origin: 'http://localhost:3000',
+      origin: [
+        'http://localhost:3000',
+        'http://192.168.0.181:3000'
+      ],
       methods: ['GET', 'POST', 'PUT', 'DELETE'],
       allowedHeaders: ['Content-Type'],
     }));
-
     // DI
     const productoRepo = new ProductoRepositorySequelize();
     const productoAppService = new ProductoAppService({ productoRepo });
