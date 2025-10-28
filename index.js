@@ -2,7 +2,6 @@ const express = require('express');
 const cors = require('cors');
 const { sequelize } = require('./src/infrastructure/database/models/models');
 
-// Repos
 const ProductoRepositorySequelize = require('./src/infrastructure/database/repositories/ProductoRepositorySequelize');
 const ClienteRepositorySequelize = require('./src/infrastructure/database/repositories/ClienteRepositorySequelize');
 const CiudadRepositorySequelize = require('./src/infrastructure/database/repositories/CiudadRepositorySequelize');
@@ -11,7 +10,6 @@ const ProductoAppService = require('./src/application/services/ProductoAppServic
 const ClienteAppService = require('./src/application/services/ClienteAppService');
 const CiudadAppService = require('./src/application/services/CiudadAppService');
 
-// Factories
 const productosRoutesFactory = require('./src/infrastructure/http/routes/productos.js');
 const clientesRoutesFactory = require('./src/infrastructure/http/routes/clientes.js');
 const ciudadesRoutesFactory = require('./src/infrastructure/http/routes/ciudades.js');
@@ -24,17 +22,19 @@ async function bootstrap() {
     const app = express();
     app.use(express.json());
 
-    //CORS
+    // CORS compatible con móviles
     app.use(
       cors({
-        origin: [
-          'http://localhost:3000',
-          'http://192.168.0.181:3000'
-        ],
-        methods: ['GET', 'POST', 'PUT', 'DELETE'],
-        allowedHeaders: ['Content-Type'],
+        origin: '*', // todos los orígenes (ajustaremos si querés más adelante)
+        methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+        allowedHeaders: ['Content-Type', 'Authorization'],
+        preflightContinue: false,
+        optionsSuccessStatus: 204,
       })
     );
+
+    // Permitir preflight manualmente
+    app.options('*', cors());
 
     const productoRepo = new ProductoRepositorySequelize();
     const clienteRepo = new ClienteRepositorySequelize();
@@ -58,7 +58,9 @@ async function bootstrap() {
       res.status(status).json({ errors: [err.message] });
     });
 
-    app.listen(4000, () => console.log('🚀 API corriendo en http://localhost:4000'));
+    app.listen(4000, () => {
+      console.log('🚀 API corriendo en http://localhost:4000');
+    });
   } catch (err) {
     console.error('❌ No se pudo iniciar la app:', err);
   }
