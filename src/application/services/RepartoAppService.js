@@ -4,6 +4,10 @@ const RepartoFilterDTO = require('../dtos/RepartoDTO/RepartoFilterDTO');
 const repartoDTO = require('../dtos/RepartoDTO/RepartoDTO');
 
 class RepartoAppService {
+/**
+ * @param {{ repartoRepo: import('../../domain/repositories/repartoRepository') }} deps
+*/
+
   constructor({ repartoRepo }) {
     this.repartoRepo = repartoRepo;
   }

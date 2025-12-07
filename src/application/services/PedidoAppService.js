@@ -4,6 +4,10 @@ const PedidoFilterDTO = require('../dtos/PedidoDTO/PedidoFilterDTO');
 const pedidoDTO = require('../dtos/PedidoDTO/PedidoDTO'); 
 
 class PedidoAppService {
+/**
+ * @param {{ pedidoRepo: import('../../domain/repositories/pedidoRepository') }} deps
+*/
+
   constructor({ pedidoRepo }) { 
     this.pedidoRepo = pedidoRepo; 
   }

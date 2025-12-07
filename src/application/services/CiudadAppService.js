@@ -3,6 +3,11 @@ const UpdateCiudadDTO = require('../dtos/CiudadDTO/UpdateCiudadDTO');
 const ciudadDTO = require('../dtos/CiudadDTO/CiudadDTO');
 
 class CiudadAppService {
+
+/**
+ * @param {{ ciudadRepo: import('../../domain/repositories/ciudadRepository') }} deps
+*/
+
   constructor({ ciudadRepo }) {
     this.ciudadRepo = ciudadRepo;
   }
