@@ -23,9 +23,13 @@ const RepartoVehiculo = require("./repartoVehiculo");
 Producto.hasMany(Existencia, { foreignKey: "productoId" });
 Existencia.belongsTo(Producto, { foreignKey: "productoId" });
 
+// Reparto 1 -> * Existencia
+Reparto.hasMany(Existencia, { foreignKey: "repartoId" });
+Existencia.belongsTo(Reparto, { foreignKey: "repartoId" });
+
 // Existencia 1 -> * LineaRemito
-Existencia.belongsTo(LineaRemito, { foreignKey: "lineaRemitoId" });
-LineaRemito.hasMany(Existencia, { foreignKey: "lineaRemitoId" });
+Existencia.hasMany(LineaRemito, { foreignKey: "existenciaId" });
+LineaRemito.belongsTo(Existencia, { foreignKey: "existenciaId" });
 
 // Existencia 1 -> * LineaDevolucion
 Existencia.hasMany(LineaDevolucion, { foreignKey: "existenciaId" });

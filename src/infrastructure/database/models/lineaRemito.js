@@ -23,6 +23,14 @@ const LineaRemito = sequelize.define('LineaRemito', {
             key: 'id',
         },
     },
+    existenciaId: {
+        type: DataTypes.INTEGER,
+        allowNull: true, // TRUE: Porque al crear el remito automático aun no elegimos el lote
+        references: {
+            model: 'existencias',
+            key: 'id',
+        },
+    },
 }, {
     tableName: 'lineas_remito',
     timestamps: false,

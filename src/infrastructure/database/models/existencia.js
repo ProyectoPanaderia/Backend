@@ -27,14 +27,6 @@ const Existencia = sequelize.define('Existencia', {
             key: 'id',
         },
     },
-    lineaRemitoId: {
-        type: DataTypes.INTEGER,
-        allowNull: false,
-        references: {
-            model: 'lineas_remito',
-            key: 'id',
-        },
-    },
     fechaE: {
         type: DataTypes.DATE,
         allowNull: false,

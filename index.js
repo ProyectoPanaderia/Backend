@@ -6,18 +6,23 @@ const ProductoRepositorySequelize = require('./src/infrastructure/database/repos
 const ClienteRepositorySequelize = require('./src/infrastructure/database/repositories/ClienteRepositorySequelize');
 const CiudadRepositorySequelize = require('./src/infrastructure/database/repositories/CiudadRepositorySequelize');
 const RepartoRepositorySequelize = require('./src/infrastructure/database/repositories/RepartoRepositorySequelize');
+const ExistenciaRepositorySequelize = require('./src/infrastructure/database/repositories/ExistenciaRepositorySequelize');
 
 
 const ProductoAppService = require('./src/application/services/ProductoAppService');
 const ClienteAppService = require('./src/application/services/ClienteAppService');
 const CiudadAppService = require('./src/application/services/CiudadAppService');
 const RepartoAppService = require('./src/application/services/RepartoAppService');
+const ExistenciaAppService = require('./src/application/services/ExistenciaAppService');
+
 
 
 const productosRoutesFactory = require('./src/infrastructure/http/routes/productos.js');
 const clientesRoutesFactory = require('./src/infrastructure/http/routes/clientes.js');
 const ciudadesRoutesFactory = require('./src/infrastructure/http/routes/ciudades.js');
 const repartosRoutesFactory = require('./src/infrastructure/http/routes/repartos.js');
+const existenciasRoutesFactory = require('./src/infrastructure/http/routes/existencias.js');
+
 
 
 async function bootstrap() {
@@ -46,16 +51,19 @@ async function bootstrap() {
     const clienteRepo = new ClienteRepositorySequelize();
     const ciudadRepo = new CiudadRepositorySequelize();
     const repartoRepo = new RepartoRepositorySequelize();
+    const existenciaRepo = new ExistenciaRepositorySequelize();
 
     const productoAppService = new ProductoAppService({ productoRepo });
     const clienteAppService = new ClienteAppService({ clienteRepo, ciudadRepo });
     const ciudadAppService = new CiudadAppService({ ciudadRepo });
     const repartoAppService = new RepartoAppService({ repartoRepo });
+    const existenciaAppService = new ExistenciaAppService({ existenciaRepo });
 
     app.use('/api/productos', productosRoutesFactory({ productoAppService }));
     app.use('/api/clientes', clientesRoutesFactory({ clienteAppService }));
     app.use('/api/ciudades', ciudadesRoutesFactory({ ciudadAppService }));
     app.use('/api/repartos', repartosRoutesFactory({ repartoAppService }));
+    app.use('/api/existencias', existenciasRoutesFactory({ existenciaAppService }));
 
     // Healthcheck
     app.get('/health', (req, res) => res.send('ok'));

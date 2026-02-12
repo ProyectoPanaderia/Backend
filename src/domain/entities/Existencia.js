@@ -1,6 +1,6 @@
 class Existencia {
-    constructor(id, fechaE, fechaV, cantidad, lineaRemitoId, productoId, repartoId) {
-      if (id == null || !fechaE || !fechaV || cantidad == null || lineaRemitoId == null || productoId == null || repartoId == null) {
+    constructor(id, fechaE, fechaV, cantidad, productoId, repartoId) {
+      if (id == null || !fechaE || !fechaV || cantidad == null || productoId == null || repartoId == null) {
         throw new Error("Todos los campos son obligatorios");
       }
   
@@ -8,7 +8,6 @@ class Existencia {
       this.fechaE = fechaE;
       this.fechaV = fechaV;
       this.cantidad = cantidad;
-      this.lineaRemitoId = lineaRemitoId;
       this.productoId = productoId;
       this.repartoId = repartoId;
     }
