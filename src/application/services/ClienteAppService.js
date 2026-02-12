@@ -2,7 +2,14 @@ const CreateClienteDTO = require('../dtos/ClienteDTO/CreateClienteDTO');
 const UpdateClienteDTO = require('../dtos/ClienteDTO/UpdateClienteDTO');
 const clienteDTO = require('../dtos/ClienteDTO/ClienteDTO');
 
+
 class ClienteAppService {
+
+/**
+ * @param {{ clienteRepo: import('../../domain/repositories/clienteRepository') }} deps
+ * @param {{ciudadRepo: import('../../domain/repositories/ciudadRepository')}} deps
+*/
+
   constructor({ clienteRepo, ciudadRepo }) {
     this.clienteRepo = clienteRepo;
     this.ciudadRepo = ciudadRepo;

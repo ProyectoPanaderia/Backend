@@ -4,6 +4,10 @@ const ProductoFilterDTO = require('../dtos/ProductoDTO/ProductoFilterDTO');
 const productoDTO = require('../dtos/ProductoDTO/ProductoDTO');
 
 class ProductoAppService {
+/**
+ * @param {{ productoRepo: import('../../domain/repositories/productoRepository') }} deps
+*/
+
   constructor({ productoRepo }) { this.productoRepo = productoRepo; }
 
   async crear(payload) {
