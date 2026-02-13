@@ -7,23 +7,24 @@ const ClienteRepositorySequelize = require('./src/infrastructure/database/reposi
 const CiudadRepositorySequelize = require('./src/infrastructure/database/repositories/CiudadRepositorySequelize');
 const RepartoRepositorySequelize = require('./src/infrastructure/database/repositories/RepartoRepositorySequelize');
 const ExistenciaRepositorySequelize = require('./src/infrastructure/database/repositories/ExistenciaRepositorySequelize');
-
+const PedidoRepositorySequelize = require('./src/infrastructure/database/repositories/PedidoRepositorySequelize');
+const LineaPedidoRepositorySequelize = require('./src/infrastructure/database/repositories/LineaPedidoRepositorySequelize');
 
 const ProductoAppService = require('./src/application/services/ProductoAppService');
 const ClienteAppService = require('./src/application/services/ClienteAppService');
 const CiudadAppService = require('./src/application/services/CiudadAppService');
 const RepartoAppService = require('./src/application/services/RepartoAppService');
 const ExistenciaAppService = require('./src/application/services/ExistenciaAppService');
-
-
+const PedidoAppService = require('./src/application/services/PedidoAppService');
+const LineaPedidoAppService = require('./src/application/services/LineaPedidoAppService');
 
 const productosRoutesFactory = require('./src/infrastructure/http/routes/productos.js');
 const clientesRoutesFactory = require('./src/infrastructure/http/routes/clientes.js');
 const ciudadesRoutesFactory = require('./src/infrastructure/http/routes/ciudades.js');
 const repartosRoutesFactory = require('./src/infrastructure/http/routes/repartos.js');
 const existenciasRoutesFactory = require('./src/infrastructure/http/routes/existencias.js');
-
-
+const pedidosRoutesFactory = require('./src/infrastructure/http/routes/pedidos.js');
+const lineasPedidoRoutesFactory = require('./src/infrastructure/http/routes/lineasPedido.js');
 
 async function bootstrap() {
   try {
@@ -36,7 +37,7 @@ async function bootstrap() {
     // CORS compatible con móviles
     app.use(
       cors({
-        origin: '*', // todos los orígenes (ajustaremos si querés más adelante)
+        origin: '*',
         methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
         allowedHeaders: ['Content-Type', 'Authorization'],
         preflightContinue: false,
@@ -52,18 +53,24 @@ async function bootstrap() {
     const ciudadRepo = new CiudadRepositorySequelize();
     const repartoRepo = new RepartoRepositorySequelize();
     const existenciaRepo = new ExistenciaRepositorySequelize();
+    const pedidoRepo = new PedidoRepositorySequelize();
+    const lineaPedidoRepo = new LineaPedidoRepositorySequelize();
 
     const productoAppService = new ProductoAppService({ productoRepo });
     const clienteAppService = new ClienteAppService({ clienteRepo, ciudadRepo });
     const ciudadAppService = new CiudadAppService({ ciudadRepo });
     const repartoAppService = new RepartoAppService({ repartoRepo });
     const existenciaAppService = new ExistenciaAppService({ existenciaRepo });
+    const pedidoAppService = new PedidoAppService({ pedidoRepo });
+    const lineaPedidoAppService = new LineaPedidoAppService({ lineaPedidoRepo, pedidoRepo });
 
     app.use('/api/productos', productosRoutesFactory({ productoAppService }));
     app.use('/api/clientes', clientesRoutesFactory({ clienteAppService }));
     app.use('/api/ciudades', ciudadesRoutesFactory({ ciudadAppService }));
     app.use('/api/repartos', repartosRoutesFactory({ repartoAppService }));
     app.use('/api/existencias', existenciasRoutesFactory({ existenciaAppService }));
+    app.use('/api/pedidos', pedidosRoutesFactory({ pedidoAppService }));
+    app.use('/api/lineas-pedido', lineasPedidoRoutesFactory({ lineaPedidoAppService }));
 
     // Healthcheck
     app.get('/health', (req, res) => res.send('ok'));

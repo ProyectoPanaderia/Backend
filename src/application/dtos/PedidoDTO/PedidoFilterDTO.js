@@ -6,6 +6,7 @@ class PedidoFilterDTO {
      * fechaEntregaDesde?: any, 
      * fechaEntregaHasta?: any, 
      * repartoId?: any, 
+     * clienteId?: any,
      * page?: any, 
      * pageSize?: any, 
      * orderBy?: any, 
@@ -19,6 +20,8 @@ class PedidoFilterDTO {
             fechaEntregaDesde, 
             fechaEntregaHasta, 
             repartoId,
+            clienteId,
+            estado,
             page = 1, 
             pageSize = 20, 
             orderBy = 'fechaEmision', 
@@ -33,10 +36,14 @@ class PedidoFilterDTO {
 
         this.repartoId = repartoId != null ? Number(repartoId) : undefined;
 
+        this.clienteId = clienteId != null ? Number(clienteId) : undefined;
+
+        this.estado = estado ? String(estado) : undefined;
+
         this.page = Math.max(1, Number(page));
         this.pageSize = Math.min(100, Math.max(1, Number(pageSize)));
 
-        const validOrder = ['id', 'fechaEmision', 'fechaEntrega', 'repartoId'];
+        const validOrder = ['id', 'fechaEmision', 'fechaEntrega', 'repartoId', 'clienteId', 'total', 'estado'];
         this.orderBy = validOrder.includes(orderBy) ? orderBy : 'fechaEmision';
         
         this.orderDir = String(orderDir).toUpperCase() === 'DESC' ? 'DESC' : 'ASC';

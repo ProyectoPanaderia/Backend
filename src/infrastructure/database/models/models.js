@@ -47,11 +47,15 @@ LineaPedido.belongsTo(Pedido, { foreignKey: "pedidoId" });
 Reparto.hasMany(Pedido, { foreignKey: "repartoId" });
 Pedido.belongsTo(Reparto, { foreignKey: "repartoId" });
 
+// Cliente 1 -> * Pedido
+Cliente.hasMany(Pedido, { foreignKey: "clienteId" });
+Pedido.belongsTo(Cliente, { foreignKey: "clienteId" });
+
 // Reparto 1 -> * Remito
 Reparto.hasMany(Remito, { foreignKey: "repartoId" });
 Remito.belongsTo(Reparto, { foreignKey: "repartoId" });
 
-// Cliente 0..1 -> * Remito
+// Cliente 1 -> * Remito
 Cliente.hasMany(Remito, { foreignKey: "clienteId" });
 Remito.belongsTo(Cliente, { foreignKey: "clienteId" });
 

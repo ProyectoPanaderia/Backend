@@ -1,20 +1,9 @@
-const { Pedido } = require("../../infrastructure/database/models");
-
-const pedidoRepository = {
-  findAll: async () => await Pedido.findAll(),
-
-  findById: async (id) => await Pedido.findByPk(id),
-
-  create: async (data) => await Pedido.create(data),
-
-  update: async (id, data) => {
-    const pedido = await Pedido.findByPk(id);
-    return await pedido.update(data);
-  },
-
-  delete: async (id) => {
-    const pedido = await Pedido.findByPk(id);
-    return await pedido.destroy();
-  },
-};
-module.exports = pedidoRepository;
+class PedidoRepository {
+  create(data) { throw new Error('Not implemented'); }
+  findAll(filter) { throw new Error('Not implemented'); }
+  findById(id) { throw new Error('Not implemented'); }
+  update(id, data) { throw new Error('Not implemented'); }
+  updateEstado(id, estado) { throw new Error('Not implemented'); } // <--- Agregado
+  delete(id) { throw new Error('Not implemented'); }
+}
+module.exports = PedidoRepository;

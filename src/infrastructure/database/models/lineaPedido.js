@@ -27,6 +27,15 @@ const LineaPedido = sequelize.define('LineaPedido', {
       key: 'id',
     },
   },
+  subtotal: {
+    type: DataTypes.DECIMAL(10, 2),
+    allowNull: false,
+    defaultValue: 0
+  },
+  descripcion: { 
+    type: DataTypes.STRING,
+    allowNull: false 
+  }
 }, {
   tableName: 'lineas_pedido',
   timestamps: false,
