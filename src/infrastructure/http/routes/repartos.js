@@ -11,5 +11,8 @@ module.exports = function repartosRoutesFactory({ repartoAppService }) {
   router.put('/:id', controller.editar);
   router.delete('/:id', controller.eliminar);
 
+  // GET /repartos/:repartoId/devoluciones - Obtener todas las devoluciones de un reparto
+  router.get('/:repartoId/devoluciones', controller.obtenerPorReparto);
+
   return router;
 };

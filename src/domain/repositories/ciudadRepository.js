@@ -1,9 +1,20 @@
-class ProductoRepository {
-  create(/* dto */) { throw new Error('Not implemented'); }
-  findAll(/* opts */) { throw new Error('Not implemented'); }
-  findById(/* id */) { throw new Error('Not implemented'); }
-  update(/* id, dto */) { throw new Error('Not implemented'); }
-  delete(/* id */) { throw new Error('Not implemented'); }
-}
+const { Ciudad } = require("../../infrastructure/database/models");
 
-module.exports = ProductoRepository;
+const ciudadRepository = {
+  findAll: async () => await Ciudad.findAll(),
+
+  findById: async (id) => await Ciudad.findByPk(id),
+
+  create: async (data) => await Ciudad.create(data),
+
+  update: async (id, data) => {
+    const ciudad = await Ciudad.findByPk(id);
+    return await ciudad.update(data);
+  },
+
+  delete: async (id) => {
+    const ciudad = await Ciudad.findByPk(id);
+    return await ciudad.destroy();
+  },
+};
+module.exports = ciudadRepository;

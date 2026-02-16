@@ -11,6 +11,7 @@ const PedidoRepositorySequelize = require('./src/infrastructure/database/reposit
 const LineaPedidoRepositorySequelize = require('./src/infrastructure/database/repositories/LineaPedidoRepositorySequelize');
 const RemitoRepositorySequelize = require('./src/infrastructure/database/repositories/RemitoRepositorySequelize');
 const LineaRemitoRepositorySequelize = require('./src/infrastructure/database/repositories/LineaRemitoRepositorySequelize');
+const DevolucionRepositorySequelize = require('./src/infrastructure/database/repositories/DevolucionRepositorySequelize');
 
 const ProductoAppService = require('./src/application/services/ProductoAppService');
 const ClienteAppService = require('./src/application/services/ClienteAppService');
@@ -21,6 +22,7 @@ const PedidoAppService = require('./src/application/services/PedidoAppService');
 const LineaPedidoAppService = require('./src/application/services/LineaPedidoAppService');
 const RemitoAppService = require('./src/application/services/RemitoAppService');
 const LineaRemitoAppService = require('./src/application/services/LineaRemitoAppService');
+const DevolucionAppService = require('./src/application/services/DevolucionAppService');
 
 const productosRoutesFactory = require('./src/infrastructure/http/routes/productos.js');
 const clientesRoutesFactory = require('./src/infrastructure/http/routes/clientes.js');
@@ -31,11 +33,13 @@ const pedidosRoutesFactory = require('./src/infrastructure/http/routes/pedidos.j
 const lineasPedidoRoutesFactory = require('./src/infrastructure/http/routes/lineasPedido.js');
 const remitosRoutesFactory = require('./src/infrastructure/http/routes/remitos.js');
 const lineasRemitoRoutesFactory = require('./src/infrastructure/http/routes/lineas-remito.js');
+const devolucionsRoutesFactory = require('./src/infrastructure/http/routes/devoluciones.js');
+
 
 async function bootstrap() {
   try {
     await sequelize.authenticate();
-    console.log('✅ Conectado a la BD');
+    console.log('Conectado a la BD');
 
     const app = express();
     app.use(express.json());
@@ -63,6 +67,7 @@ async function bootstrap() {
     const lineaPedidoRepo = new LineaPedidoRepositorySequelize();
     const remitoRepo = new RemitoRepositorySequelize();
     const lineaRemitoRepo = new LineaRemitoRepositorySequelize();
+    const devolucionRepo = new DevolucionRepositorySequelize();
 
     const productoAppService = new ProductoAppService({ productoRepo });
     const clienteAppService = new ClienteAppService({ clienteRepo, ciudadRepo });
@@ -73,6 +78,7 @@ async function bootstrap() {
     const lineaPedidoAppService = new LineaPedidoAppService({ lineaPedidoRepo, pedidoRepo });
     const remitoAppService = new RemitoAppService({remitoRepo, clienteRepo, repartoRepo });
     const lineaRemitoAppService = new LineaRemitoAppService({lineaRemitoRepo, remitoRepo, existenciaRepo});
+    const devolucionAppService = new DevolucionAppService({ devolucionRepo, repartoRepo });
 
     app.use('/api/productos', productosRoutesFactory({ productoAppService }));
     app.use('/api/clientes', clientesRoutesFactory({ clienteAppService }));
@@ -83,6 +89,7 @@ async function bootstrap() {
     app.use('/api/lineas-pedido', lineasPedidoRoutesFactory({ lineaPedidoAppService }));
     app.use('/api/remitos', remitosRoutesFactory({ remitoAppService }));
     app.use('/api/lineas-remito', lineasRemitoRoutesFactory({ lineaRemitoAppService }));
+    app.use('/api/devoluciones', devolucionsRoutesFactory({ devolucionAppService }));
 
     // Healthcheck
     app.get('/health', (req, res) => res.send('ok'));

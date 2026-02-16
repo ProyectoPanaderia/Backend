@@ -1,12 +1,20 @@
-// src/domain/repositories/lineaRemitoRepository.js
+const LineaRemito = require("../../infrastructure/database/models/lineaRemito");
 
-class LineaRemitoRepository {
-  create(/* dto */) { throw new Error('Not implemented'); }
-  findAll(/* filter */) { throw new Error('Not implemented'); }
-  findById(/* id */) { throw new Error('Not implemented'); }
-  findByRemitoId(/* remitoId */) { throw new Error('Not implemented'); }
-  update(/* id, dto */) { throw new Error('Not implemented'); }
-  delete(/* id */) { throw new Error('Not implemented'); }
-}
+const lineaRemitoRepository = {
+  findAll: async () => await LineaRemito.findAll(),
 
-module.exports = LineaRemitoRepository;
+  findById: async (id) => await LineaRemito.findByPk(id),
+
+  create: async (data) => await LineaRemito.create(data),
+
+  update: async (id, data) => {
+    const lineaRemito = await LineaRemito.findByPk(id);
+    return await lineaRemito.update(data);
+  },
+
+  delete: async (id) => {
+    const lineaRemito = await LineaRemito.findByPk(id);
+    return await lineaRemito.destroy();
+  },
+};
+module.exports = lineaRemitoRepository;
