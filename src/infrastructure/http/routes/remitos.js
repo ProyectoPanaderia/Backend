@@ -24,10 +24,10 @@ module.exports = function remitosRoutesFactory({ remitoAppService }) {
   router.delete('/:id', controller.eliminar);
 
   // GET /remitos/:remitoId/lineas - Obtener todas las líneas de un remito
-  router.get('/:remitoId/lineas', controller.obtenerPorRemito);
+  //router.get('/:remitoId/lineas', controller.obtenerPorRemito);
 
   // GET /remitos/:remitoId/total - Calcular total de un remito
-  router.get('/:remitoId/total', controller.calcularTotalRemito);
+  //router.get('/:remitoId/total', controller.calcularTotalRemito);
 
   return router;
 };

@@ -1,20 +1,9 @@
-const { Remito } = require("../../infrastructure/database/models");
+class RemitoRepository {
+  async create(data) { throw new Error('Not implemented'); }
+  async findAll(filter) { throw new Error('Not implemented'); }
+  async findById(id) { throw new Error('Not implemented'); }
+  async update(id, data) { throw new Error('Not implemented'); }
+  async delete(id) { throw new Error('Not implemented'); }
+}
 
-const remitoRepository = {
-  findAll: async () => await Remito.findAll(),
-
-  findById: async (id) => await Remito.findByPk(id),
-
-  create: async (data) => await Remito.create(data),
-
-  update: async (id, data) => {
-    const remito = await Remito.findByPk(id);
-    return await remito.update(data);
-  },
-
-  delete: async (id) => {
-    const remito = await Remito.findByPk(id);
-    return await remito.destroy();
-  },
-};
-module.exports = remitoRepository;
+module.exports = RemitoRepository;

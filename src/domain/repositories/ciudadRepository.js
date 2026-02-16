@@ -1,20 +1,9 @@
-const { Ciudad } = require("../../infrastructure/database/models");
+class CiudadRepository {
+  async create(data) { throw new Error('Not implemented'); }
+  async findAll(filter) { throw new Error('Not implemented'); }
+  async findById(id) { throw new Error('Not implemented'); }
+  async update(id, data) { throw new Error('Not implemented'); }
+  async delete(id) { throw new Error('Not implemented'); }
+}
 
-const ciudadRepository = {
-  findAll: async () => await Ciudad.findAll(),
-
-  findById: async (id) => await Ciudad.findByPk(id),
-
-  create: async (data) => await Ciudad.create(data),
-
-  update: async (id, data) => {
-    const ciudad = await Ciudad.findByPk(id);
-    return await ciudad.update(data);
-  },
-
-  delete: async (id) => {
-    const ciudad = await Ciudad.findByPk(id);
-    return await ciudad.destroy();
-  },
-};
-module.exports = ciudadRepository;
+module.exports = CiudadRepository;

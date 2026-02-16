@@ -1,20 +1,9 @@
-const { Devolucion } = require("../../infrastructure/database/models");
+class DevolucionRepository {
+  async create(data) { throw new Error('Not implemented'); }
+  async findAll(filter) { throw new Error('Not implemented'); }
+  async findById(id) { throw new Error('Not implemented'); }
+  async update(id, data) { throw new Error('Not implemented'); }
+  async delete(id) { throw new Error('Not implemented'); }
+}
 
-const devolucionRepository = {
-  findAll: async () => await Devolucion.findAll(),
-
-  findById: async (id) => await Devolucion.findByPk(id),
-
-  create: async (data) => await Devolucion.create(data),
-
-  update: async (id, data) => {
-    const devolucion = await Devolucion.findByPk(id);
-    return await devolucion.update(data);
-  },
-
-  delete: async (id) => {
-    const devolucion = await Devolucion.findByPk(id);
-    return await devolucion.destroy();
-  },
-};
-module.exports = devolucionRepository;
+module.exports = DevolucionRepository;

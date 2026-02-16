@@ -1,20 +1,9 @@
-const { Reparto } = require("../../infrastructure/database/models");
+class RepartoRepository {
+  async create(data) { throw new Error('Not implemented'); }
+  async findAll(filter) { throw new Error('Not implemented'); }
+  async findById(id) { throw new Error('Not implemented'); }
+  async update(id, data) { throw new Error('Not implemented'); }
+  async delete(id) { throw new Error('Not implemented'); }
+}
 
-const repartoRepository = {
-  findAll: async () => await Reparto.findAll(),
-
-  findById: async (id) => await Reparto.findByPk(id),
-
-  create: async (data) => await Reparto.create(data),
-
-  update: async (id, data) => {
-    const reparto = await Reparto.findByPk(id);
-    return await reparto.update(data);
-  },
-
-  delete: async (id) => {
-    const reparto = await Reparto.findByPk(id);
-    return await reparto.destroy();
-  },
-};
-module.exports = repartoRepository;
+module.exports = RepartoRepository;
