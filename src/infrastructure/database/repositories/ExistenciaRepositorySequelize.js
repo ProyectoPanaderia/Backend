@@ -1,37 +1,30 @@
-const { Existencia, Producto, Reparto } = require('../models/models.js');
+const { Existencia, Producto, Reparto } = require('../models/models.js'); // Asegurate que la ruta sea correcta
+const { Op } = require('sequelize');
 const ExistenciaRepository = require('../../../domain/repositories/existenciaRepository');
 
 class ExistenciaRepositorySequelize extends ExistenciaRepository {
   
   async create(data) {
+    // data.fechaE ya viene como string "YYYY-MM-DD" del DTO
     const nueva = await Existencia.create(data);
-
     return await nueva.reload({ include: [Producto, Reparto] });
   }
 
-async findAll(filter = {}) {
-    const { productoId, repartoId, fechaVencimiento, fechaElaboracion } = filter;
+  async findAll(filter = {}) {
+    const { productoId, repartoId, fechaV, fechaE } = filter;
     
     const whereClause = {};
 
-    // filtros por id
+    // Filtros por ID
     if (productoId) whereClause.productoId = Number(productoId);
     if (repartoId) whereClause.repartoId = Number(repartoId);
-
-    // filtro vencimiento
-    if (fechaVencimiento) {
-      const inicio = new Date(fechaVencimiento);
-      const fin = new Date(fechaVencimiento);
-      fin.setHours(23, 59, 59, 999);
-      whereClause.fechaVencimiento = { [Op.between]: [inicio, fin] };
+  
+    if (fechaV) {
+      whereClause.fechaV = fechaV; 
     }
 
-    // filtro elaboracion
-    if (fechaElaboracion) {
-      const inicio = new Date(fechaElaboracion);
-      const fin = new Date(fechaElaboracion);
-      fin.setHours(23, 59, 59, 999);
-      whereClause.fechaElaboracion = { [Op.between]: [inicio, fin] };
+    if (fechaE) {
+      whereClause.fechaE = fechaE;
     }
 
     const rows = await Existencia.findAll({

@@ -13,13 +13,11 @@ function existenciaDTO(ex) {
   return {
     id: row.id,
     cantidad: row.cantidad,
-    // Mapeo de nombres para coincidir con tu Frontend (fechaE / fechaV)
     fechaE: row.fechaE,
     fechaV: row.fechaV,
     productoId: row.productoId,
     repartoId: row.repartoId,
     
-    // Relaciones (si el Include de Sequelize las trajo)
     Producto: row.Producto ? {
       id: row.Producto.id,
       nombre: row.Producto.nombre,

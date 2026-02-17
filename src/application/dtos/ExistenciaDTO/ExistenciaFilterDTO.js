@@ -6,15 +6,19 @@ class ExistenciaFilterDTO {
     const {
       productoId,
       repartoId,
+      fechaE,
+      fechaV, 
       page = 1,
       pageSize = 20,
       orderBy = 'id',
-      orderDir = 'DESC', // Por defecto mostramos lo último creado primero
+      orderDir = 'DESC',
     } = q;
 
     // Filtros específicos
     this.productoId = productoId ? Number(productoId) : undefined;
     this.repartoId = repartoId ? Number(repartoId) : undefined;
+    this.fechaE = fechaE || undefined;
+    this.fechaV = fechaV || undefined;
 
     // Paginación
     this.page = Math.max(1, Number(page));

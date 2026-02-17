@@ -46,6 +46,9 @@ async function bootstrap() {
     await sequelize.authenticate();
     console.log('Conectado a la BD');
 
+    await sequelize.sync({ alter: true });
+    console.log('Modelos de Sequelize sincronizados con la Base de Datos');
+
     const app = express();
     app.use(express.json());
 

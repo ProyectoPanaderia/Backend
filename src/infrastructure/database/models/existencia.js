@@ -28,11 +28,11 @@ const Existencia = sequelize.define('Existencia', {
         },
     },
     fechaE: {
-        type: DataTypes.DATE,
+        type: DataTypes.STRING,
         allowNull: false,
     },
     fechaV: {
-        type: DataTypes.DATE,
+        type: DataTypes.STRING,
         allowNull: false,
     },
 }, {

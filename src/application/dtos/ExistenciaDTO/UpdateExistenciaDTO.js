@@ -23,7 +23,7 @@ class UpdateExistenciaDTO {
       if (typeof fechaE !== 'string' || !fechaE.trim()) {
         throw new Error('fechaElaboracion inválida');
       }
-      this.fechaE = this.fechaE;
+      this.fechaE = fechaE;
     }
 
     if (fechaV !== undefined) {
