@@ -17,7 +17,7 @@ const LineaDevolucion = require("./lineaDevolucion");
 const Devolucion = require("./devolucion");
 const RepartoEmpleado = require("./repartoEmpleado");
 const RepartoVehiculo = require("./repartoVehiculo");
-
+const PrecioProducto = require("./precioProducto");
 
 // Producto 1 -> * Existencia
 Producto.hasMany(Existencia, { foreignKey: "productoId" });
@@ -87,11 +87,16 @@ LineaDevolucion.belongsTo(Devolucion, { foreignKey: "devolucionId" });
 Remito.hasMany(LineaRemito, { foreignKey: "remitoId" });
 LineaRemito.belongsTo(Remito, { foreignKey: "remitoId" });
 
+// Producto 1 -> * PrecioProducto
+Producto.hasMany(PrecioProducto, { foreignKey: "productoId" });
+PrecioProducto.belongsTo(Producto, { foreignKey: "productoId" });
+
 // Exportar modelos y sequelize ya configurado
 module.exports = {
     sequelize,
     Existencia,
     Producto,
+    PrecioProducto,
     LineaRemito,
     Remito,
     Cliente,    

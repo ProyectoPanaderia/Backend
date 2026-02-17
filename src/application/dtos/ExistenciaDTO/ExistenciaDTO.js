@@ -5,11 +5,7 @@
  */
 function existenciaDTO(ex) {
   if (!ex) return null;
-
-  // Si viene una instancia Sequelize, usamos .get({ plain: true })
-  // Si no, usamos el objeto directo.
   const row = typeof ex.get === 'function' ? ex.get({ plain: true }) : ex;
-
   return {
     id: row.id,
     cantidad: row.cantidad,
@@ -18,17 +14,17 @@ function existenciaDTO(ex) {
     productoId: row.productoId,
     repartoId: row.repartoId,
     
-    Producto: row.Producto ? {
+    // Cambiar a minúscula para seguir convenciones JS
+    producto: row.Producto ? {
       id: row.Producto.id,
       nombre: row.Producto.nombre,
       peso: row.Producto.peso
     } : null,
     
-    Reparto: row.Reparto ? {
+    reparto: row.Reparto ? {
       id: row.Reparto.id,
       nombre: row.Reparto.nombre
     } : null
   };
 }
-
 module.exports = existenciaDTO;
