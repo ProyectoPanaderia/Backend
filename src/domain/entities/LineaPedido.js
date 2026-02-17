@@ -11,6 +11,7 @@ class LineaPedido {
     this.productoId = productoId;
     this.precioUnitario = precioUnitario;
     this.descripcion = descripcion;
+    
   }
 }
 
