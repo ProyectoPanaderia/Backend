@@ -30,15 +30,15 @@ class RepartoController {
     }
   }
 
-  async obtener(req, res, next) {
-    try {
-      const id = Number(req.params.id);
-      const result = await this.repartoAppService.obtener(id);
-      res.json(result); // { data: {...} }
-    } catch (err) {
-      next(err);
-    }
+async obtener(req, res, next) {
+  try {
+    const id = Number(req.params.id);
+    const result = await this.repartoAppService.obtener(id);
+    res.json({ data: result }); 
+  } catch (err) {
+    next(err);
   }
+}
 
   async editar(req, res, next) {
     try {

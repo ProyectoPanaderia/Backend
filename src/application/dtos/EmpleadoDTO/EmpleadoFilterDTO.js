@@ -12,11 +12,15 @@ class EmpleadoFilterDTO {
       this.repartoId = Number(query.repartoId);
     }
 
+    if (query.usuarioId && !isNaN(Number(query.usuarioId))) {
+    this.usuarioId = Number(query.usuarioId);
+    }
+
     this.page = query.page ? Math.max(1, Number(query.page)) : 1;
     this.pageSize = query.pageSize ? Math.min(100, Math.max(1, Number(query.pageSize))) : 10;
     this.offset = (this.page - 1) * this.pageSize;
 
-    const validOrder = ['id', 'nombre', 'apellido', 'email', 'repartoId'];
+    const validOrder = ['id', 'nombre', 'repartoId', 'usuarioId'];
     this.orderBy = validOrder.includes(query.orderBy) ? query.orderBy : 'nombre';
     this.orderDir = String(query.orderDir || '').toUpperCase() === 'DESC' ? 'DESC' : 'ASC';
   }

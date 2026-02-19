@@ -6,6 +6,7 @@ class EmpleadoController {
     this.listar = this.listar.bind(this);
     this.obtener = this.obtener.bind(this);
     this.obtenerPorReparto = this.obtenerPorReparto.bind(this);
+    this.obtenerPorUsuario = this.obtenerPorUsuario.bind(this);
     this.editar = this.editar.bind(this);
     this.eliminar = this.eliminar.bind(this);
   }
@@ -45,6 +46,16 @@ class EmpleadoController {
     try {
       const repartoId = Number(req.params.repartoId);
       const result = await this.empleadoAppService.obtenerPorReparto(repartoId);
+      res.json(result);
+    } catch (err) {
+      next(err);
+    }
+  }
+
+    async obtenerPorUsuario(req, res, next) {
+    try {
+      const usuarioId = Number(req.params.usuarioId);
+      const result = await this.empleadoAppService.obtenerPorUsuario(usuarioId);
       res.json(result);
     } catch (err) {
       next(err);

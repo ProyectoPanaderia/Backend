@@ -15,9 +15,15 @@ class EmpleadoAppService {
   async crear(payload) {
     const dto = new CreateEmpleadoDTO(payload);
 
-    // Validar que el reparto existe
+    // 1. Validar que el reparto existe
     const reparto = await this.repartoRepo.findById(dto.repartoId);
     if (!reparto) throw new Error('Reparto no encontrado');
+
+    // 2. NUEVO: Validar que el usuario no tenga ya un empleado asignado
+    const existente = await this.empleadoRepo.findAll({ usuarioId: dto.usuarioId });
+    if (existente.data.length > 0) {
+      throw new Error('Este usuario ya tiene un perfil de empleado asignado');
+    }
 
     const created = await this.empleadoRepo.create(dto);
     return { data: empleadoDTO(created) };
@@ -49,6 +55,18 @@ class EmpleadoAppService {
       meta: { total: empleados.length }
     };
   }
+
+  async obtenerPorUsuario(usuarioId) {
+  // Buscamos al empleado vinculado a este ID de usuario
+  const result = await this.empleadoRepo.findAll({ usuarioId: Number(usuarioId) });
+  
+  if (!result.data || result.data.length === 0) {
+    throw new Error('No hay un perfil de empleado para este usuario');
+  }
+  
+  // Como es 1:1, devolvemos el primero
+  return { data: empleadoDTO(result.data[0]) };
+}
 
   async editar(id, payload) {
     const dto = new UpdateEmpleadoDTO(payload);

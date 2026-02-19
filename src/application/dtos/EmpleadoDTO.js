@@ -1,9 +1,9 @@
 class EmpleadoDTO {
-  constructor({ id, nombre, cargo, repartoEmpleadoId }) {
+  constructor({ id, nombre, repartoId, usuarioId } = {}) {
     this.id = id;
     this.nombre = nombre;
-    this.cargo = cargo;
-    this.repartoEmpleadoId = repartoEmpleadoId;
+    this.repartoId = repartoId;
+    this.usuarioId = usuarioId;
   }
 }
 module.exports = EmpleadoDTO;

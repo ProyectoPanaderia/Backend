@@ -15,9 +15,17 @@ const Vehiculo = require("./vehiculo");
 const Empleado = require("./empleado");
 const LineaDevolucion = require("./lineaDevolucion");
 const Devolucion = require("./devolucion");
-const RepartoEmpleado = require("./repartoEmpleado");
 const RepartoVehiculo = require("./repartoVehiculo");
 const PrecioProducto = require("./precioProducto");
+const Usuario = require("./usuario");
+
+// Relación 1:1 entre Usuario y Empleado
+Usuario.hasOne(Empleado, { foreignKey: 'usuarioId'});
+Empleado.belongsTo(Usuario, { foreignKey: 'usuarioId'});
+
+// Relación 1:1 entre Reparto y Empleado
+Reparto.hasOne(Empleado, { foreignKey: 'repartoId'});
+Empleado.belongsTo(Reparto, { foreignKey: 'repartoId'});
 
 // Producto 1 -> * Existencia
 Producto.hasMany(Existencia, { foreignKey: "productoId" });
@@ -63,12 +71,6 @@ Remito.belongsTo(Cliente, { foreignKey: "clienteId" });
 Ciudad.hasMany(Cliente, { foreignKey: "ciudadId" });
 Cliente.belongsTo(Ciudad, { foreignKey: "ciudadId" });
 
-// Reparto * -> * Empleado (con clase intermedia)
-Reparto.hasMany(RepartoEmpleado, { foreignKey: "repartoId" });
-Empleado.hasMany(RepartoEmpleado, { foreignKey: "empleadoId" });
-RepartoEmpleado.belongsTo(Reparto, { foreignKey: "repartoId" });
-RepartoEmpleado.belongsTo(Empleado, { foreignKey: "empleadoId" });
-
 // Reparto * -> * Vehiculo (con clase intermedia)
 Reparto.hasMany(RepartoVehiculo, { foreignKey: "repartoId" });
 Vehiculo.hasMany(RepartoVehiculo, { foreignKey: "vehiculoId" });
@@ -108,7 +110,7 @@ module.exports = {
     Empleado,
     LineaDevolucion,
     Devolucion,
-    RepartoEmpleado,
-    RepartoVehiculo
+    RepartoVehiculo,
+    Usuario
 };
 

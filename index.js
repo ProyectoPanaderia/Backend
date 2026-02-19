@@ -15,6 +15,7 @@ const DevolucionRepositorySequelize = require('./src/infrastructure/database/rep
 const VehiculoRepositorySequelize = require('./src/infrastructure/database/repositories/VehiculoRepositorySequelize');
 const EmpleadoRepositorySequelize = require('./src/infrastructure/database/repositories/EmpleadoRepositorySequelize');
 const PrecioProductoRepositorySequelize = require('./src/infrastructure/database/repositories/PrecioProductoRepositorySequelize');
+const AuthRepositorySequelize = require('./src/infrastructure/database/repositories/AuthRepositorySequelize');
 
 const ProductoAppService = require('./src/application/services/ProductoAppService');
 const ClienteAppService = require('./src/application/services/ClienteAppService');
@@ -29,6 +30,7 @@ const DevolucionAppService = require('./src/application/services/DevolucionAppSe
 const VehiculoAppService = require('./src/application/services/VehiculoAppService');
 const EmpleadoAppService = require('./src/application/services/EmpleadoAppService');
 const PrecioProductoAppService = require('./src/application/services/PrecioProductoAppService');
+const AuthAppService = require('./src/application/services/AuthAppService');
 
 const productosRoutesFactory = require('./src/infrastructure/http/routes/productos.js');
 const clientesRoutesFactory = require('./src/infrastructure/http/routes/clientes.js');
@@ -43,6 +45,7 @@ const devolucionsRoutesFactory = require('./src/infrastructure/http/routes/devol
 const vehiculosRoutesFactory = require('./src/infrastructure/http/routes/vehiculos.js');
 const empleadosRoutesFactory = require('./src/infrastructure/http/routes/empleados.js');
 const precioProductosRoutesFactory = require('./src/infrastructure/http/routes/precioProductos.js');
+const authRoutesFactory = require('./src/infrastructure/http/routes/auth.js');
 
 async function bootstrap() {
   try {
@@ -82,6 +85,7 @@ async function bootstrap() {
     const vehiculoRepo = new VehiculoRepositorySequelize();
     const empleadoRepo = new EmpleadoRepositorySequelize();
     const precioProductoRepo = new PrecioProductoRepositorySequelize();
+    const authRepo = new AuthRepositorySequelize();
 
     const productoAppService = new ProductoAppService({ productoRepo });
     const clienteAppService = new ClienteAppService({ clienteRepo, ciudadRepo });
@@ -96,7 +100,8 @@ async function bootstrap() {
     const vehiculoAppService = new VehiculoAppService({ vehiculoRepo, repartoRepo });
     const empleadoAppService = new EmpleadoAppService({ empleadoRepo, repartoRepo });
     const precioProductoAppService = new PrecioProductoAppService({ precioProductoRepo, productoRepo });
-
+    const authAppService = new AuthAppService({ usuarioRepo: authRepo, empleadoRepo: empleadoRepo });
+    
     app.use('/api/productos', productosRoutesFactory({ productoAppService }));
     app.use('/api/clientes', clientesRoutesFactory({ clienteAppService }));
     app.use('/api/ciudades', ciudadesRoutesFactory({ ciudadAppService }));
@@ -110,6 +115,7 @@ async function bootstrap() {
     app.use('/api/empleados', empleadosRoutesFactory({ empleadoAppService }));
     app.use('/api/devoluciones', devolucionsRoutesFactory({ devolucionAppService }));
     app.use('/api/precio-productos', precioProductosRoutesFactory({ precioProductoAppService }));
+    app.use('/api/auth', authRoutesFactory({ authAppService }));
 
     // Healthcheck
     app.get('/health', (req, res) => res.send('ok'));

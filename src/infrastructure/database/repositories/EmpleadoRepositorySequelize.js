@@ -1,62 +1,82 @@
-const EmpleadoRepository = require('../../../domain/repositories/empleadoRepository');
-const { Empleado } = require('../models/models');
+const { Reparto, Empleado } = require('../models/models.js'); //
+const RepartoRepository = require('../../../domain/repositories/repartoRepository');
+const { Op } = require('sequelize');
 
-class EmpleadoRepositorySequelize extends EmpleadoRepository {
+class RepartoRepositorySequelize extends RepartoRepository {
   async create(data) {
-    return await Empleado.create(data);
+    return await Reparto.create(data);
   }
 
+  // Listar con filtros y paginación
   async findAll(filter = {}) {
-    const offset = filter.offset || 0;
-    const limit = filter.pageSize || 10;
-    const order = [[filter.orderBy || 'id', filter.orderDir || 'ASC']];
-
     const where = {};
-    if (filter.nombre) where.nombre = { [require('sequelize').Op.like]: `%${filter.nombre}%` };
-    if (filter.repartoId) where.repartoId = filter.repartoId;
 
-    const { count, rows } = await Empleado.findAndCountAll({
+    // Filtro por ID (Crucial para que el repartidor vea SOLO su reparto)
+    if (filter.id) {
+      where.id = filter.id;
+    }
+
+    // Filtro textual por nombre
+    if (filter.q) {
+      where.nombre = { [Op.like]: `%${filter.q}%` };
+    }
+
+    // Filtro por tercerizado
+    if (filter.tercerizado) {
+      where.tercerizado = filter.tercerizado;
+    }
+
+    // Filtro por estado
+    if (filter.estado) {
+      where.estado = filter.estado;
+    }
+
+    const page = filter.page || 1;
+    const pageSize = filter.pageSize || 10;
+    const offset = (page - 1) * pageSize;
+    const limit = pageSize;
+    const orderBy = filter.orderBy || 'id';
+    const orderDir = filter.orderDir || 'ASC';
+
+    const { rows, count } = await Reparto.findAndCountAll({
       where,
+      order: [[orderBy, orderDir]],
       offset,
       limit,
-      order,
-      include: ['Reparto']
+      // Ahora Empleado sí está definido arriba en el require
+      include: [{ 
+        model: Empleado 
+      }]
     });
 
     return {
       data: rows,
       meta: {
         total: count,
-        page: Math.floor(offset / limit) + 1,
-        pageSize: limit,
-        totalPages: Math.ceil(count / limit)
-      }
+        page: page,
+        pageSize: pageSize,
+      },
     };
   }
 
   async findById(id) {
-    return await Empleado.findByPk(id, { include: ['Reparto'] });
-  }
-
-  async findByRepartoId(repartoId) {
-    return await Empleado.findAll({
-      where: { repartoId },
-      include: ['Reparto']
+    return await Reparto.findByPk(id, { 
+      include: [{ model: Empleado }] 
     });
   }
 
   async update(id, data) {
-    const empleado = await Empleado.findByPk(id);
-    if (!empleado) return null;
-    return await empleado.update(data);
+    const reparto = await Reparto.findByPk(id);
+    if (!reparto) return null;
+    return await reparto.update(data);
   }
 
   async delete(id) {
-    const empleado = await Empleado.findByPk(id);
-    if (!empleado) return false;
-    await empleado.destroy();
+    const reparto = await Reparto.findByPk(id);
+    if (!reparto) return false;
+    await reparto.destroy();
     return true;
   }
 }
 
-module.exports = EmpleadoRepositorySequelize;
+module.exports = RepartoRepositorySequelize;

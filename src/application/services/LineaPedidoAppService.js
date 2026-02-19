@@ -1,13 +1,10 @@
 const CreateLineaPedidoDTO = require('../dtos/LineaPedidoDTO/CreateLineaPedidoDTO');
 const UpdateLineaPedidoDTO = require('../dtos/LineaPedidoDTO/UpdateLineaPedidoDTO');
 const LineaPedidoFilterDTO = require('../dtos/LineaPedidoDTO/LineaPedidoFilterDTO');
-const lineaPedidoDTO = require('../dtos/LineaPedidoDTO/LineaPedidoDTO');
+const LineaPedidoDTO = require('../dtos/LineaPedidoDTO/LineaPedidoDTO');
 
 class LineaPedidoAppService {
-  /**
-   * Necesitamos pedidoRepo para actualizar el total del pedido
-   * cada vez que modificamos sus líneas.
-   */
+
   constructor({ lineaPedidoRepo, pedidoRepo }) {
     this.lineaPedidoRepo = lineaPedidoRepo;
     this.pedidoRepo = pedidoRepo;
@@ -15,21 +12,16 @@ class LineaPedidoAppService {
 
   // Agregar una línea a un pedido existente
   async crear(payload) {
-    // 1. Validamos datos de la línea
-    // Nota: El payload debe incluir 'pedidoId' si estamos agregando a un pedido ya existente
     const dto = new CreateLineaPedidoDTO(payload);
     
-    // Asignamos el pedidoId manualmente si viene en el payload (ya que el DTO de creación anidada no lo exigía)
     const dataToSave = { ...dto, pedidoId: payload.pedidoId };
     if (!dataToSave.pedidoId) throw new Error('Para crear una línea suelta se requiere pedidoId');
 
-    // 2. Guardamos
     const created = await this.lineaPedidoRepo.create(dataToSave);
 
-    // 3. ACTUALIZAMOS TOTAL DEL PEDIDO
     await this._recalcularTotalPedido(dataToSave.pedidoId);
 
-    return { data: lineaPedidoDTO(created) };
+    return { data: new LineaPedidoDTO(created) };
   }
 
   async listar(query) {
@@ -37,7 +29,7 @@ class LineaPedidoAppService {
     const result = await this.lineaPedidoRepo.findAll(filter);
     
     return {
-      data: result.data.map(lineaPedidoDTO),
+      data: result.data.map(linea => new LineaPedidoDTO(linea)),
       meta: result.meta
     };
   }
@@ -45,7 +37,7 @@ class LineaPedidoAppService {
   async obtener(id) {
     const linea = await this.lineaPedidoRepo.findById(Number(id));
     if (!linea) throw new Error('Línea de pedido no encontrada');
-    return { data: lineaPedidoDTO(linea) };
+    return { data: new LineaPedidoDTO(linea) };
   }
 
   async editar(id, payload) {
@@ -72,7 +64,7 @@ class LineaPedidoAppService {
     // 5. ACTUALIZAMOS TOTAL DEL PEDIDO
     await this._recalcularTotalPedido(lineaActual.pedidoId);
 
-    return { data: lineaPedidoDTO(updated) };
+    return { data: new LineaPedidoDTO(updated) };
   }
 
   async eliminar(id) {

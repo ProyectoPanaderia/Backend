@@ -11,10 +11,6 @@ const Empleado = sequelize.define('Empleado', {
         type: DataTypes.STRING,
         allowNull: false,
     },
-    cargo: {
-        type: DataTypes.STRING,
-        allowNull: false,
-    },
     repartoId: {
         type: DataTypes.INTEGER,
         allowNull: false,
@@ -22,6 +18,14 @@ const Empleado = sequelize.define('Empleado', {
             model: 'repartos',
             key: 'id',
         },
+    },
+    usuarioId: {
+    type: DataTypes.INTEGER,
+    allowNull: false,
+    references: {
+        model: 'usuarios',
+        key: 'id',
+    },
     },
 }, {
     tableName: 'empleados',

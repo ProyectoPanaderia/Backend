@@ -1,13 +1,13 @@
 class Empleado {
-  constructor(id, nombre, cargo, repartoEmpleadoId) {
-    if (id == null || !nombre || !cargo || repartoEmpleadoId == null) {
+  constructor(id, nombre, cargo, repartoId, usuarioId) {
+    if (id == null || !nombre || repartoId == null || usuarioId == null) {
       throw new Error("Todos los campos son obligatorios");
     }
 
     this.id = id;
     this.nombre = nombre;
-    this.cargo = cargo;
-    this.repartoEmpleadoId = repartoEmpleadoId;
+    this.repartoId = repartoId;
+    this.usuarioId = usuarioId;
   }
 }
 

@@ -1,4 +1,4 @@
-const { Reparto } = require('../models/models.js');
+const { Reparto, Empleado } = require('../models/models.js'); 
 const RepartoRepository = require('../../../domain/repositories/repartoRepository');
 const { Op } = require('sequelize');
 
@@ -7,47 +7,46 @@ class RepartoRepositorySequelize extends RepartoRepository {
     return await Reparto.create(data);
   }
 
-  // Listar con filtros y paginación
-  async findAll(filter) {
+async findAll(filter = {}) {
     const where = {};
 
-    // Filtro textual por nombre
-    if (filter.q) {
-      where.nombre = { [Op.like]: `%${filter.q}%` };
-    }
+    // Filtros de búsqueda y seguridad
+    if (filter.id) where.id = filter.id;
+    if (filter.q) where.nombre = { [Op.like]: `%${filter.q}%` };
+    if (filter.tercerizado) where.tercerizado = filter.tercerizado;
+    if (filter.estado) where.estado = filter.estado;
 
-    // Filtro por tercerizado
-    if (filter.tercerizado) {
-      where.tercerizado = filter.tercerizado;
-    }
+    const page = filter.page || 1;
+    const pageSize = filter.pageSize || 10;
+    const offset = (page - 1) * pageSize;
+    const limit = pageSize;
+    const orderBy = filter.orderBy || 'id';
+    const orderDir = filter.orderDir || 'ASC';
 
-    // Filtro por estado
-    if (filter.estado) {
-      where.estado = filter.estado;
-    }
-
-    const offset = (filter.page - 1) * filter.pageSize;
-    const limit = filter.pageSize;
-
+    // SOLUCIÓN: Buscamos solo en la tabla Repartos, sin mezclar a los empleados.
+    // Esto garantiza 100% que cada ID venga una sola vez.
     const { rows, count } = await Reparto.findAndCountAll({
       where,
-      order: [[filter.orderBy, filter.orderDir]],
+      order: [[orderBy, orderDir]],
       offset,
-      limit,
+      limit
     });
 
     return {
       data: rows,
       meta: {
         total: count,
-        page: filter.page,
-        pageSize: filter.pageSize,
+        page: page,
+        pageSize: pageSize,
       },
     };
   }
 
   async findById(id) {
-    return await Reparto.findByPk(id);
+    return await Reparto.findByPk(id, { 
+      // Acá sí dejamos el include normal por si al ver el detalle querés saber quién es el empleado
+      include: [{ model: Empleado }] 
+    });
   }
 
   async update(id, data) {
