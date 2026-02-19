@@ -4,13 +4,19 @@ const RemitoFilterDTO = require('../dtos/RemitoDTO/RemitoFilterDTO');
 const remitoDTO = require('../dtos/RemitoDTO/RemitoDTO');
 
 class RemitoAppService {
-  /**
-   * @param {{ remitoRepo: import('../../domain/repositories/remitoRepository'), clienteRepo: import('../../domain/repositories/clienteRepository'), repartoRepo: import('../../domain/repositories/repartoRepository') }} deps
+/**
+   * @param {{ 
+   * remitoRepo: import('../../domain/repositories/remitoRepository'), 
+   * clienteRepo: import('../../domain/repositories/clienteRepository'), 
+   * repartoRepo: import('../../domain/repositories/repartoRepository'),
+   * pedidoRepo: import('../../domain/repositories/pedidoRepository') 
+   * }} deps
    */
-  constructor({ remitoRepo, clienteRepo, repartoRepo }) {
+  constructor({ remitoRepo, clienteRepo, repartoRepo, pedidoRepo }) {
     this.remitoRepo = remitoRepo;
     this.clienteRepo = clienteRepo;
     this.repartoRepo = repartoRepo;
+    this.pedidoRepo = pedidoRepo;
   }
 
   // Crear nuevo remito (venta)
@@ -28,6 +34,23 @@ class RemitoAppService {
     if (!reparto) throw new Error('Reparto no encontrado');
 
     const created = await this.remitoRepo.create(dto);
+
+    if (dto.pedidoOrigenId) {
+      try {
+        // Intentamos cambiar el estado del pedido original a 'Completado'
+        // Nos aseguramos de que el método updateEstado exista en el repo de Pedidos
+        if (this.pedidoRepo && typeof this.pedidoRepo.updateEstado === 'function') {
+           await this.pedidoRepo.updateEstado(dto.pedidoOrigenId, 'Completado');
+        } else {
+           console.warn("pedidoRepo.updateEstado no está definido. No se pudo actualizar el estado del pedido.");
+        }
+      } catch (error) {
+        // Atrapamos el error pero no frenamos el proceso principal
+        // El remito ya se creó y descontó stock correctamente.
+        console.error(`Error al intentar actualizar el estado del pedido ${dto.pedidoOrigenId}:`, error);
+      }
+    }
+
     return { data: remitoDTO(created) };
   }
 

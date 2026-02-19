@@ -143,6 +143,21 @@ class PedidoRepositorySequelize extends PedidoRepository {
     return pedido;
   }
 
+  async findLastByClienteId(clienteId) {
+    return await Pedido.findOne({
+      where: { clienteId: Number(clienteId) },
+      order: [['fechaEmision', 'DESC']], // Ordenamos del más nuevo al más viejo
+      include: [
+        { model: Cliente },
+        { model: Reparto },
+        { 
+          model: LineaPedido,
+          include: [{ model: Producto, attributes: ['nombre', 'peso'] }] 
+        }
+      ]
+    });
+  }
+
   async delete(id) {
     const pedido = await Pedido.findByPk(id);
     if (!pedido) return false;

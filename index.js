@@ -94,7 +94,7 @@ async function bootstrap() {
     const existenciaAppService = new ExistenciaAppService({ existenciaRepo });
     const pedidoAppService = new PedidoAppService({ pedidoRepo });
     const lineaPedidoAppService = new LineaPedidoAppService({ lineaPedidoRepo, pedidoRepo });
-    const remitoAppService = new RemitoAppService({remitoRepo, clienteRepo, repartoRepo });
+    const remitoAppService = new RemitoAppService({remitoRepo, clienteRepo, repartoRepo, pedidoRepo });
     const lineaRemitoAppService = new LineaRemitoAppService({lineaRemitoRepo, remitoRepo, existenciaRepo});
     const devolucionAppService = new DevolucionAppService({ devolucionRepo, repartoRepo });
     const vehiculoAppService = new VehiculoAppService({ vehiculoRepo, repartoRepo });

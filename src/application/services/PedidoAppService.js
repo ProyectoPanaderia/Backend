@@ -34,6 +34,20 @@ class PedidoAppService {
     return { data: new PedidoDTO(pedido) };
   }
 
+  async obtenerUltimoPorCliente(clienteId) {
+    if (!clienteId || isNaN(Number(clienteId))) {
+       throw new Error('ID de cliente inválido');
+    }
+    const pedido = await this.pedidoRepo.findLastByClienteId(Number(clienteId));
+    
+    if (!pedido) {
+      // Si no tiene pedidos anteriores, devolvemos null en vez de error para no romper el frontend
+      return { data: null }; 
+    }
+    
+    return { data: new PedidoDTO(pedido) };
+  }
+
   async editar(id, payload) {
     const dto = new UpdatePedidoDTO(payload);
     const updated = await this.pedidoRepo.update(Number(id), dto);

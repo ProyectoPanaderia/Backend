@@ -5,6 +5,8 @@ module.exports = function pedidosRoutesFactory({ pedidoAppService }) {
   const router = Router();
   const controller = new PedidoController(pedidoAppService);
 
+  router.get('/ultimo/:clienteId', controller.obtenerUltimoPorCliente);
+  
   // POST /pedidos
   router.post('/', controller.crear);
 

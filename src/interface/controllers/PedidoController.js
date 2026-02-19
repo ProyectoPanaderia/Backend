@@ -9,6 +9,7 @@ class PedidoController {
     this.editar = this.editar.bind(this); // Para cambios generales (fecha, etc.)
     this.cambiarEstado = this.cambiarEstado.bind(this); // Específico para flujo de trabajo
     this.eliminar = this.eliminar.bind(this);
+    this.obtenerUltimoPorCliente = this.obtenerUltimoPorCliente.bind(this);
   }
 
   // POST /pedidos
@@ -79,6 +80,21 @@ class PedidoController {
       next(err);
     }
   }
-}
 
+async obtenerUltimoPorCliente(req, res, next) {
+    try {
+      const clienteId = Number(req.params.clienteId);
+      const result = await this.pedidoAppService.obtenerUltimoPorCliente(clienteId);
+      
+      // Si result.data es null (no hay pedidos), mandamos un 404 para que el frontend lo ataje limpio
+      if (!result.data) {
+        return res.status(404).json({ message: "No se encontraron pedidos previos para este cliente" });
+      }
+      
+      res.json(result); 
+    } catch (err) {
+      next(err);
+    }
+  }
+}
 module.exports = PedidoController;
