@@ -1,11 +1,10 @@
-const { Remito, Cliente, Reparto, LineaRemito, Existencia, sequelize } = require('../models/models.js');
+const { Remito, Cliente, Reparto, LineaRemito, Existencia, Producto, sequelize } = require('../models/models.js');
 const { Op } = require('sequelize');
 const RemitoRepository = require('../../../domain/repositories/remitoRepository');
 
 class RemitoRepositorySequelize extends RemitoRepository {
   
 async create(dto) {
-    // ej: falta stock, se cancela todo
     const t = await sequelize.transaction();
 
     try {
@@ -21,9 +20,6 @@ async create(dto) {
       for (const lineaReq of dto.lineas) {
         let cantidadFaltante = lineaReq.cantidad;
 
-        // Buscar todas las existencias (lotes) de este producto en este camión (reparto)
-        // Ordenadas por ID ascendente (asumiendo que ID menor = lote más viejo)
-        // Solo traemos las que tienen cantidad > 0
         const lotesDisponibles = await Existencia.findAll({
           where: {
             repartoId: dto.repartoId,
@@ -34,27 +30,22 @@ async create(dto) {
           transaction: t
         });
 
-        // Verificar si la suma de todos los lotes alcanza para el pedido
         const stockTotal = lotesDisponibles.reduce((sum, lote) => sum + lote.cantidad, 0);
         if (stockTotal < cantidadFaltante) {
           throw new Error(`Stock insuficiente para el producto ID ${lineaReq.productoId}. Solicitado: ${cantidadFaltante}, Disponible: ${stockTotal}`);
         }
 
-        // Consumir lotes (FIFO)
         for (const lote of lotesDisponibles) {
           if (cantidadFaltante <= 0) break;
 
           const cantidadATomarDeEsteLote = Math.min(lote.cantidad, cantidadFaltante);
           
-          // Actualizar el lote restando lo que tomamos
           await lote.update({
             cantidad: lote.cantidad - cantidadATomarDeEsteLote
           }, { transaction: t });
 
-          // Calcular el subtotal proporcional para este fragmento de línea
           const subtotalProporcional = cantidadATomarDeEsteLote * lineaReq.precioUnitario;
 
-          // Crear la línea del remito asociada a este lote específico
           await LineaRemito.create({
             remitoId: nuevoRemito.id,
             existenciaId: lote.id,
@@ -66,22 +57,28 @@ async create(dto) {
         }
       }
 
-      // Si llegamos hasta acá, todo salió bien. Confirmamos la transacción.
       await t.commit();
 
-      // Devolvemos el remito completo con sus relaciones
+      // Devolver con includes completos incluyendo Producto
       return await nuevoRemito.reload({ 
         include: [
           { model: Cliente },
           { model: Reparto },
-          { model: LineaRemito }
+          { 
+            model: LineaRemito,
+            include: [
+              {
+                model: Existencia,
+                include: [Producto]
+              }
+            ]
+          }
         ]
       });
 
     } catch (error) {
-      // Si hubo cualquier error (ej. falta de stock), deshacemos todo
       await t.rollback();
-      throw error; // Relanzamos el error para que el AppService / Controller lo atrape y mande el HTTP 400
+      throw error;
     }
   }
 
@@ -90,11 +87,9 @@ async create(dto) {
     
     const whereClause = {};
 
-    // Filtros por ID
     if (clienteId) whereClause.clienteId = Number(clienteId);
     if (repartoId) whereClause.repartoId = Number(repartoId);
 
-    // Filtro por rango de fechas
     if (fechaDesde || fechaHasta) {
       whereClause.fecha = {};
       
@@ -115,7 +110,15 @@ async create(dto) {
       include: [
         { model: Cliente },
         { model: Reparto },
-        { model: LineaRemito }
+        { 
+          model: LineaRemito,
+          include: [
+            {
+              model: Existencia,
+              include: [Producto]
+            }
+          ]
+        }
       ],
       order: [[orderBy || 'fecha', orderDir || 'DESC']],
       offset: offset || 0,
@@ -139,7 +142,15 @@ async create(dto) {
       include: [
         { model: Cliente },
         { model: Reparto },
-        { model: LineaRemito }
+        { 
+          model: LineaRemito,
+          include: [
+            {
+              model: Existencia,
+              include: [Producto]
+            }
+          ]
+        }
       ]
     });
   }
@@ -153,7 +164,15 @@ async create(dto) {
       include: [
         { model: Cliente },
         { model: Reparto },
-        { model: LineaRemito }
+        { 
+          model: LineaRemito,
+          include: [
+            {
+              model: Existencia,
+              include: [Producto]
+            }
+          ]
+        }
       ]
     });
   }

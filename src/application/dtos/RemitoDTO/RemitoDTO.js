@@ -9,7 +9,6 @@ function remitoDTO(remito) {
     clienteId: row.clienteId,
     repartoId: row.repartoId,
     
-    // Cambiar a minúscula para seguir convenciones JS
     cliente: row.Cliente ? {
       id: row.Cliente.id,
       nombre: row.Cliente.nombre,
@@ -23,12 +22,17 @@ function remitoDTO(remito) {
       estado: row.Reparto.estado
     } : null,
     
-    lineasRemito: row.LineasRemito ? row.LineasRemito.map(linea => ({
+    lineasRemito: row.LineaRemitos ? row.LineaRemitos.map(linea => ({  // <-- CAMBIAR A LineaRemitos
       id: linea.id,
       cantidad: linea.cantidad,
       subtotal: linea.subtotal,
-      existenciaId: linea.existenciaId
+      existenciaId: linea.existenciaId,
+      producto: linea.Existencium?.Producto ? {  // <-- También Existencium (plural de Existencia)
+        id: linea.Existencium.Producto.id,
+        nombre: linea.Existencium.Producto.nombre
+      } : null
     })) : []
   };
 }
+
 module.exports = remitoDTO;
