@@ -8,18 +8,31 @@ const Devolucion = sequelize.define('Devolucion', {
         autoIncrement: true,
     },
     fecha: {
-        type: DataTypes.DATE,
+        type: DataTypes.DATEONLY,
         allowNull: false,
     },
     razon: {
         type: DataTypes.STRING,
         allowNull: false,
     },
+    total: {
+    type: DataTypes.DECIMAL(10, 2),
+    allowNull: false,
+    defaultValue: 0
+    },
     repartoId: {
         type: DataTypes.INTEGER,
         allowNull: false,
         references: {
             model: 'repartos',
+            key: 'id',
+        },
+    },
+    clienteId: {
+        type: DataTypes.INTEGER,
+        allowNull: false,
+        references: {
+            model: 'clientes',
             key: 'id',
         },
     },

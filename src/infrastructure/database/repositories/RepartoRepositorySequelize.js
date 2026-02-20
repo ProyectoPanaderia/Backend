@@ -23,12 +23,12 @@ async findAll(filter = {}) {
     const orderBy = filter.orderBy || 'id';
     const orderDir = filter.orderDir || 'ASC';
 
-    // SOLUCIÓN: Buscamos solo en la tabla Repartos, sin mezclar a los empleados.
-    // Esto garantiza 100% que cada ID venga una sola vez.
     const { rows, count } = await Reparto.findAndCountAll({
       where,
       order: [[orderBy, orderDir]],
       offset,
+      raw: true,
+      nest: true,
       limit
     });
 
@@ -43,10 +43,10 @@ async findAll(filter = {}) {
   }
 
   async findById(id) {
-    return await Reparto.findByPk(id, { 
-      // Acá sí dejamos el include normal por si al ver el detalle querés saber quién es el empleado
-      include: [{ model: Empleado }] 
+    const res = await Reparto.findByPk(id, { 
+      include: [{ model: Empleado }]
     });
+    return res ? res.get({ plain: true }) : null;
   }
 
   async update(id, data) {

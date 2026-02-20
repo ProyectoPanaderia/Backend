@@ -40,8 +40,8 @@ Existencia.hasMany(LineaRemito, { foreignKey: "existenciaId" });
 LineaRemito.belongsTo(Existencia, { foreignKey: "existenciaId" });
 
 // Existencia 1 -> * LineaDevolucion
-Existencia.hasMany(LineaDevolucion, { foreignKey: "existenciaId" });
-LineaDevolucion.belongsTo(Existencia, { foreignKey: "existenciaId" });
+Producto.hasMany(LineaDevolucion, { foreignKey: "productoId" });
+LineaDevolucion.belongsTo(Producto, { foreignKey: "productoId" });
 
 // Producto 1 -> * LineaPedido
 Producto.hasMany(LineaPedido, { foreignKey: "productoId" });
@@ -80,6 +80,10 @@ RepartoVehiculo.belongsTo(Vehiculo, { foreignKey: "vehiculoId" });
 // Reparto 1 -> * Devolucion
 Reparto.hasMany(Devolucion, { foreignKey: "repartoId" });
 Devolucion.belongsTo(Reparto, { foreignKey: "repartoId" });
+
+// Cliente 1 -> * Devolucion
+Cliente.hasMany(Devolucion, { foreignKey: "clienteId" });
+Devolucion.belongsTo(Cliente, { foreignKey: "clienteId" });
 
 // Devolucion 1 -> * LineaDevolucion
 Devolucion.hasMany(LineaDevolucion, { foreignKey: "devolucionId" });

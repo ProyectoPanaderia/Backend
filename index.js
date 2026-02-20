@@ -12,6 +12,7 @@ const LineaPedidoRepositorySequelize = require('./src/infrastructure/database/re
 const RemitoRepositorySequelize = require('./src/infrastructure/database/repositories/RemitoRepositorySequelize');
 const LineaRemitoRepositorySequelize = require('./src/infrastructure/database/repositories/LineaRemitoRepositorySequelize');
 const DevolucionRepositorySequelize = require('./src/infrastructure/database/repositories/DevolucionRepositorySequelize');
+const LineaDevolucionRepositorySequelize = require('./src/infrastructure/database/repositories/LineaDevolucionRepositorySequelize');
 const VehiculoRepositorySequelize = require('./src/infrastructure/database/repositories/VehiculoRepositorySequelize');
 const EmpleadoRepositorySequelize = require('./src/infrastructure/database/repositories/EmpleadoRepositorySequelize');
 const PrecioProductoRepositorySequelize = require('./src/infrastructure/database/repositories/PrecioProductoRepositorySequelize');
@@ -27,6 +28,7 @@ const LineaPedidoAppService = require('./src/application/services/LineaPedidoApp
 const RemitoAppService = require('./src/application/services/RemitoAppService');
 const LineaRemitoAppService = require('./src/application/services/LineaRemitoAppService');
 const DevolucionAppService = require('./src/application/services/DevolucionAppService');
+const LineaDevolucionAppService = require('./src/application/services/LineaDevolucionAppService');
 const VehiculoAppService = require('./src/application/services/VehiculoAppService');
 const EmpleadoAppService = require('./src/application/services/EmpleadoAppService');
 const PrecioProductoAppService = require('./src/application/services/PrecioProductoAppService');
@@ -42,6 +44,7 @@ const lineasPedidoRoutesFactory = require('./src/infrastructure/http/routes/line
 const remitosRoutesFactory = require('./src/infrastructure/http/routes/remitos.js');
 const lineasRemitoRoutesFactory = require('./src/infrastructure/http/routes/lineas-remito.js');
 const devolucionsRoutesFactory = require('./src/infrastructure/http/routes/devoluciones.js');
+const lineasDevolucionRoutesFactory = require('./src/infrastructure/http/routes/lineas-devolucion.js');
 const vehiculosRoutesFactory = require('./src/infrastructure/http/routes/vehiculos.js');
 const empleadosRoutesFactory = require('./src/infrastructure/http/routes/empleados.js');
 const precioProductosRoutesFactory = require('./src/infrastructure/http/routes/precioProductos.js');
@@ -84,6 +87,7 @@ async function bootstrap() {
     const devolucionRepo = new DevolucionRepositorySequelize();
     const vehiculoRepo = new VehiculoRepositorySequelize();
     const empleadoRepo = new EmpleadoRepositorySequelize();
+    const lineaDevolucionRepo = new LineaDevolucionRepositorySequelize();
     const precioProductoRepo = new PrecioProductoRepositorySequelize();
     const authRepo = new AuthRepositorySequelize();
 
@@ -99,6 +103,7 @@ async function bootstrap() {
     const devolucionAppService = new DevolucionAppService({ devolucionRepo, repartoRepo });
     const vehiculoAppService = new VehiculoAppService({ vehiculoRepo, repartoRepo });
     const empleadoAppService = new EmpleadoAppService({ empleadoRepo, repartoRepo });
+    const lineaDevolucionAppService = new LineaDevolucionAppService({ lineaDevolucionRepo, devolucionRepo });
     const precioProductoAppService = new PrecioProductoAppService({ precioProductoRepo, productoRepo });
     const authAppService = new AuthAppService({ usuarioRepo: authRepo, empleadoRepo: empleadoRepo });
     
@@ -114,6 +119,7 @@ async function bootstrap() {
     app.use('/api/vehiculos', vehiculosRoutesFactory({ vehiculoAppService }));
     app.use('/api/empleados', empleadosRoutesFactory({ empleadoAppService }));
     app.use('/api/devoluciones', devolucionsRoutesFactory({ devolucionAppService }));
+    app.use('/api/lineas-devolucion', lineasDevolucionRoutesFactory({ lineaDevolucionAppService }));
     app.use('/api/precio-productos', precioProductosRoutesFactory({ precioProductoAppService }));
     app.use('/api/auth', authRoutesFactory({ authAppService }));
 

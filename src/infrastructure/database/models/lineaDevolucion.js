@@ -11,11 +11,21 @@ const LineaDevolucion = sequelize.define('LineaDevolucion', {
         type: DataTypes.INTEGER,
         allowNull: false,
     },
-    existenciaId: {
+    precioUnitario: {
+        type: DataTypes.DECIMAL(10, 2),
+        allowNull: false,
+        defaultValue: 0
+    },
+    subtotal: {
+        type: DataTypes.DECIMAL(10, 2),
+        allowNull: false,
+        defaultValue: 0
+    },
+    productoId: {
         type: DataTypes.INTEGER,
         allowNull: false,
         references: {
-            model: 'existencias',
+            model: 'productos',
             key: 'id',
         },
     },

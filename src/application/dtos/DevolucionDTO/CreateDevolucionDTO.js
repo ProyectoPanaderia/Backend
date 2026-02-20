@@ -1,28 +1,47 @@
+const CreateLineaDevolucionDTO = require('../LineaDevolucionDTO/CreateLineaDevolucionDTO.js');
+
 class CreateDevolucionDTO {
-  /**
-   * @param {{ fecha: any, razon: any, repartoId: any }} param0
-   */
-  constructor({ fecha, razon, repartoId }) {
-    
-    // Validar fecha
-    if (!fecha || typeof fecha !== 'string') {
-      throw new Error('fecha requerida y debe ser válida (YYYY-MM-DD)');
-    }
+    /**
+     * @param {{ fecha:any, razon:any, repartoId: any, clienteId: any, lineas: any[]}} param0
+     */
+    constructor({ fecha, razon, repartoId, clienteId, lineas } = {}) {
 
-    // Validar razon
-    if (!razon || typeof razon !== 'string' || !razon.trim()) {
-      throw new Error('razon requerida y debe ser un texto válido');
-    }
+        // 1. Validar Fecha
+        const fechaDev = fecha ? new Date(fecha) : new Date();
+        if (isNaN(fechaDev.getTime())) throw new Error('Fecha inválida');
 
-    // Validar repartoId
-    if (!repartoId || isNaN(Number(repartoId))) {
-      throw new Error('repartoId requerido y debe ser numérico');
-    }
+        // 2. Validar Razón
+        if (!razon || String(razon).trim() === '') {
+            throw new Error('La razón (motivo) de la devolución es obligatoria');
+        }
 
-    this.fecha = fecha;
-    this.razon = razon.trim();
-    this.repartoId = Number(repartoId);
-  }
+        // 3. Validar Reparto
+        const rId = Number(repartoId);
+        if (isNaN(rId) || rId <= 0) {
+            throw new Error('repartoId inválido');
+        }
+        
+        // 4. Validar Cliente
+        const cId = Number(clienteId);
+        if (isNaN(cId) || cId <= 0) {
+            throw new Error('clienteId inválido');
+        }
+
+        // 5. Validar Líneas
+        if (!lineas || !Array.isArray(lineas) || lineas.length === 0) {
+            throw new Error('La devolución debe tener al menos un producto');
+        }
+
+        this.fecha = fechaDev;
+        this.razon = String(razon).trim();
+        this.repartoId = rId;
+        this.clienteId = cId;
+
+        // Mapeamos las líneas y validamos cada una con su propio DTO
+        this.lineas = lineas.map(l => new CreateLineaDevolucionDTO(l));
+
+        // Calculamos el total de la devolución sumando los subtotales de las líneas
+        this.total = this.lineas.reduce((acc, curr) => acc + curr.subtotal, 0);
+    }
 }
-
 module.exports = CreateDevolucionDTO;

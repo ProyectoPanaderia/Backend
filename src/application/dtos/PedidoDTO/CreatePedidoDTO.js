@@ -15,8 +15,12 @@ class CreatePedidoDTO {
         if (fechaEnt < fechaEmi)
             throw new Error('fechaEntrega debe ser igual o posterior a fechaEmision');
 
-        if (!repartoId || isNaN(Number(repartoId)) || Number(repartoId) <= 0)
+        const rId = Number(repartoId);
+        if (isNaN(rId) || rId <= 0) {
+            console.error("DEBUG DTO - Valor recibido de repartoId:", repartoId);
             throw new Error('repartoId inválido');
+        }
+        
         if (!clienteId || isNaN(Number(clienteId)) || Number(clienteId) <= 0)
             throw new Error('clienteId inválido');
 
@@ -26,7 +30,7 @@ class CreatePedidoDTO {
 
         this.fechaEmision = fechaEmi;
         this.fechaEntrega = fechaEnt;
-        this.repartoId = Number(repartoId);
+        this.repartoId = rId;
         this.clienteId = Number(clienteId);
         this.estado = estado || 'Pendiente';
 

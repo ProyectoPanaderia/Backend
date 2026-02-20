@@ -6,13 +6,20 @@ class LineaPedidoRepositorySequelize extends LineaPedidoRepository {
     return await LineaPedido.create(data);
   }
   
-  async findAll(filter) {
-    const rows = await LineaPedido.findAll(); // ✅ usar el import directo
-    return {
-      data: rows,
-      meta: { total: rows.length }
-    };
+async findAll(filter = {}) {
+  const { pedidoId } = filter;
+  const where = {};
+  
+  if (pedidoId) {
+    where.pedidoId = Number(pedidoId);
   }
+
+  const rows = await LineaPedido.findAll({ where }); 
+  return {
+    data: rows,
+    meta: { total: rows.length }
+  };
+}
 
   async findById(id) {
     return await LineaPedido.findByPk(id);

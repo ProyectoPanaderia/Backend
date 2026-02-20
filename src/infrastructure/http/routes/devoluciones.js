@@ -1,26 +1,27 @@
 const { Router } = require('express');
 const DevolucionController = require('../../../interface/controllers/DevolucionController');
+const { verificarToken } = require('../middleware/authMiddleware'); // Ajustá la ruta de tu middleware
 
-module.exports = function devolucionsRoutesFactory({ devolucionAppService }) {
+module.exports = function devolucionesRoutesFactory({ devolucionAppService }) {
   const router = Router();
   const controller = new DevolucionController(devolucionAppService);
 
-  // GET /devoluciones/estadisticas/resumen - ANTES del :id para evitar conflictos
-  router.get('/estadisticas/resumen', controller.obtenerEstadisticas);
+  // Protegemos todas las rutas de devoluciones
+  router.use(verificarToken);
 
-  // POST /devoluciones - Crear nueva devolución
+  // POST /api/devoluciones
   router.post('/', controller.crear);
 
-  // GET /devoluciones - Listar devoluciones
+  // GET /api/devoluciones
   router.get('/', controller.listar);
 
-  // GET /devoluciones/:id - Obtener devolución por ID
+  // GET /api/devoluciones/:id
   router.get('/:id', controller.obtener);
 
-  // PUT /devoluciones/:id - Actualizar devolución
-  router.put('/:id', controller.editar);
+  // PATCH /api/devoluciones/:id
+  router.patch('/:id', controller.editar);
 
-  // DELETE /devoluciones/:id - Eliminar devolución
+  // DELETE /api/devoluciones/:id
   router.delete('/:id', controller.eliminar);
 
   return router;

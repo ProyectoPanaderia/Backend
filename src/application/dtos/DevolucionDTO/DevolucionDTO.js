@@ -1,46 +1,34 @@
-/**
- * Mapea un objeto de dominio/Sequelize a DTO plano seguro
- * @param {any} devolucion - Instancia Sequelize o objeto plano
- * @returns {any|null}
- */
-function devolucionDTO(devolucion) {
-  if (!devolucion) return null;
+const LineaDevolucionDTO = require('../LineaDevolucionDTO/LineaDevolucionDTO');
 
-  // Si viene una instancia Sequelize, convertir a objeto plano
-  const row = typeof devolucion.get === 'function' ? devolucion.get({ plain: true }) : devolucion;
+class DevolucionDTO {
+  constructor(data = {}) {
+    // Si viene de Sequelize, usamos .get({ plain: true }) o la data directa
+    const d = typeof data.get === 'function' ? data.get({ plain: true }) : data;
 
-  return {
-    id: row.id,
-    fecha: row.fecha,
-    razon: row.razon,
-    repartoId: row.repartoId,
-    
-    // Relaciones (si el Include de Sequelize las trajo)
-    Reparto: row.Reparto ? {
-      id: row.Reparto.id,
-      nombre: row.Reparto.nombre,
-      tercerizado: row.Reparto.tercerizado,
-      estado: row.Reparto.estado
-    } : null,
-    
-    // LineaDevolucion si existen detalles
-    LineaDevolucion: row.LineaDevolucion ? row.LineaDevolucion.map(linea => ({
-      id: linea.id,
-      cantidad: linea.cantidad,
-      existenciaId: linea.existenciaId,
-      devolucionId: linea.devolucionId,
-      Existencia: linea.Existencia ? {
-        id: linea.Existencia.id,
-        cantidad: linea.Existencia.cantidad,
-        productoId: linea.Existencia.productoId,
-        Producto: linea.Existencia.Producto ? {
-          id: linea.Existencia.Producto.id,
-          nombre: linea.Existencia.Producto.nombre,
-          peso: linea.Existencia.Producto.peso
-        } : null
-      } : null
-    })) : []
-  };
+    this.id = d.id;
+    this.fecha = d.fecha;
+    this.razon = d.razon;
+    this.total = Number(d.total) || 0;
+    this.repartoId = d.repartoId;
+    this.clienteId = d.clienteId;
+
+    // Expandimos relaciones para mostrar nombres en el front
+    this.Cliente = d.Cliente ? {
+        id: d.Cliente.id,
+        nombre: d.Cliente.nombre,
+        apellido: d.Cliente.apellido,
+        direccion: d.Cliente.direccion
+    } : null;
+
+    this.Reparto = d.Reparto ? {
+        id: d.Reparto.id,
+        nombre: d.Reparto.nombre
+    } : null;
+
+    // Mapeamos las líneas usando el DTO correspondiente
+    this.lineas = (d.LineaDevolucions && Array.isArray(d.LineaDevolucions))
+        ? d.LineaDevolucions.map(l => new LineaDevolucionDTO(l))
+        : [];
+  }
 }
-
-module.exports = devolucionDTO;
+module.exports = DevolucionDTO;

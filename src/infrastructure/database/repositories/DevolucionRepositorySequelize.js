@@ -1,132 +1,100 @@
-const { Devolucion, Reparto, LineaDevolucion, Existencia, Producto } = require('../models/models.js');
 const { Op } = require('sequelize');
-const DevolucionRepository = require('../../../domain/repositories/devolucionRepository');
+const { Devolucion, LineaDevolucion, Cliente, Reparto, Existencia, Producto, sequelize } = require('../models/models');
 
-class DevolucionRepositorySequelize extends DevolucionRepository {
+class DevolucionRepositorySequelize {
   
-  async create(data) {
-    const nuevaDevolucion = await Devolucion.create(data);
-    return await nuevaDevolucion.reload({ 
-      include: [
-        { model: Reparto },
-        { 
-          model: LineaDevolucion,
-          include: [{ 
-            model: Existencia,
-            include: [{ model: Producto }]
-          }]
-        }
-      ]
-    });
+async create(data) {
+    const t = await sequelize.transaction();
+
+    try {
+      // 1. Creamos la cabecera
+      const nuevaDevolucion = await Devolucion.create({
+        fecha: data.fecha,
+        razon: data.razon,
+        repartoId: data.repartoId,
+        clienteId: data.clienteId,
+        total: data.total
+      }, { transaction: t });
+
+      // 2. Preparamos las líneas atándolas al ID recién creado
+      const lineasConId = data.lineas.map(l => ({
+        devolucionId: nuevaDevolucion.id,
+        productoId: l.productoId,
+        cantidad: l.cantidad,
+        precioUnitario: l.precioUnitario,
+        subtotal: l.subtotal
+      }));
+
+      // 3. Insertamos las líneas
+      await LineaDevolucion.bulkCreate(lineasConId, { transaction: t });
+
+      // 4. CONFIRMAMOS. A partir de acá, no se puede hacer rollback.
+      await t.commit();
+
+      // Devolvemos la devolución completa
+      return await this.findById(nuevaDevolucion.id);
+
+    } catch (error) {
+      // BLINDAJE: Solo hacemos rollback si no se llegó al commit
+      if (!t.finished) {
+        await t.rollback();
+      }
+      throw error;
+    }
   }
 
   async findAll(filter = {}) {
-    const { repartoId, fechaDesde, fechaHasta, razon, offset, pageSize, orderBy, orderDir } = filter;
-    
+    const { fechaDesde, fechaHasta, repartoId, clienteId, razon, page = 1, pageSize = 20 } = filter;
     const whereClause = {};
 
-    // Filtro por repartoId
     if (repartoId) whereClause.repartoId = Number(repartoId);
+    if (clienteId) whereClause.clienteId = Number(clienteId);
+    if (razon) whereClause.razon = { [Op.like]: `%${razon}%` };
 
-    // Filtro por rango de fechas
-    if (fechaDesde || fechaHasta) {
-      whereClause.fecha = {};
-      
-      if (fechaDesde) {
-        const inicio = new Date(fechaDesde);
-        whereClause.fecha[Op.gte] = inicio;
-      }
-      
-      if (fechaHasta) {
-        const fin = new Date(fechaHasta);
-        fin.setHours(23, 59, 59, 999);
-        whereClause.fecha[Op.lte] = fin;
-      }
+    if (fechaDesde && fechaHasta) {
+      whereClause.fecha = { [Op.between]: [new Date(fechaDesde), new Date(fechaHasta)] };
     }
 
-    // Filtro por razón (búsqueda parcial)
-    if (razon) {
-      whereClause.razon = { [Op.like]: `%${razon}%` };
-    }
+    const limit = Number(pageSize);
+    const offset = (Number(page) - 1) * limit;
 
-    const rows = await Devolucion.findAll({
+    const { count, rows } = await Devolucion.findAndCountAll({
       where: whereClause,
       include: [
-        { model: Reparto },
-        { 
-          model: LineaDevolucion,
-          include: [{ 
-            model: Existencia,
-            include: [{ model: Producto }]
-          }]
-        }
+        { model: Cliente },
+        { model: Reparto }
       ],
-      order: [[orderBy || 'fecha', orderDir || 'DESC']],
-      offset: offset || 0,
-      limit: pageSize || 10
+      limit,
+      offset,
+      order: [['fecha', 'DESC']],
+      distinct: true
     });
-
-    const total = await Devolucion.count({ where: whereClause });
 
     return {
       data: rows,
-      meta: {
-        total,
-        page: Math.floor((offset || 0) / (pageSize || 10)) + 1,
-        pageSize: pageSize || 10
-      }
+      meta: { total: count, page: Number(page), pageSize: limit, totalPages: Math.ceil(count / limit) }
     };
   }
 
-  async findById(id) {
+async findById(id) {
     return await Devolucion.findByPk(id, {
       include: [
+        { model: Cliente },
         { model: Reparto },
         { 
           model: LineaDevolucion,
-          include: [{ 
-            model: Existencia,
-            include: [{ model: Producto }]
-          }]
+          // ACÁ ESTABA EL ERROR: Ahora incluimos Producto directo
+          include: [{ model: Producto, attributes: ['nombre'] }] 
         }
       ]
-    });
-  }
-
-  async findByRepartoId(repartoId) {
-    return await Devolucion.findAll({
-      where: { repartoId: Number(repartoId) },
-      include: [
-        { model: Reparto },
-        { 
-          model: LineaDevolucion,
-          include: [{ 
-            model: Existencia,
-            include: [{ model: Producto }]
-          }]
-        }
-      ],
-      order: [['fecha', 'DESC']]
     });
   }
 
   async update(id, data) {
     const devolucion = await Devolucion.findByPk(id);
     if (!devolucion) return null;
-    
     await devolucion.update(data);
-    return await devolucion.reload({ 
-      include: [
-        { model: Reparto },
-        { 
-          model: LineaDevolucion,
-          include: [{ 
-            model: Existencia,
-            include: [{ model: Producto }]
-          }]
-        }
-      ]
-    });
+    return await this.findById(id);
   }
 
   async delete(id) {

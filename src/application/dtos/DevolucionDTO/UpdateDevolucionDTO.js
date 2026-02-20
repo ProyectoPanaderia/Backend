@@ -1,37 +1,39 @@
 class UpdateDevolucionDTO {
   /**
-   * @param {{ fecha?: any, razon?: any, repartoId?: any }} param0
+   * @param {{ fecha?:any, razon?:any, repartoId?:any, clienteId?:any }} param0
    */
-  constructor({ fecha, razon, repartoId } = {}) {
+  constructor({ fecha, razon, repartoId, clienteId } = {}) {
     
-    // fecha es opcional en actualizaciones
-    if (fecha !== undefined && (!fecha || typeof fecha !== 'string')) {
-      throw new Error('fecha debe ser válida (YYYY-MM-DD)');
+    if (fecha !== undefined) {
+      if (fecha === null || String(fecha).trim() === '') throw new Error('La fecha es obligatoria');
+      this.fecha = String(fecha).trim();
     }
 
-    // razon es opcional en actualizaciones
-    if (razon !== undefined && (!razon || typeof razon !== 'string' || !razon.trim())) {
-      throw new Error('razon debe ser un texto válido');
+    if (razon !== undefined) {
+      if (razon === null || String(razon).trim() === '') throw new Error('La razón no puede estar vacía');
+      this.razon = String(razon).trim();
     }
 
-    // repartoId es opcional en actualizaciones
-    if (repartoId !== undefined && isNaN(Number(repartoId))) {
-      throw new Error('repartoId debe ser numérico');
+    if (repartoId !== undefined) {
+      const rId = Number(repartoId);
+      if (isNaN(rId) || rId <= 0) throw new Error('El reparto seleccionado es inválido');
+      this.repartoId = rId;
     }
 
-    if (fecha !== undefined) this.fecha = fecha;
-    if (razon !== undefined) this.razon = razon.trim();
-    if (repartoId !== undefined) this.repartoId = Number(repartoId);
+    if (clienteId !== undefined) {
+      const cId = Number(clienteId);
+      if (isNaN(cId) || cId <= 0) throw new Error('El cliente seleccionado es inválido');
+      this.clienteId = cId;
+    }
 
-    // Verificar que al menos un campo fue actualizado
     if (
-      this.fecha === undefined &&
-      this.razon === undefined &&
-      this.repartoId === undefined
+      this.fecha === undefined && 
+      this.razon === undefined && 
+      this.repartoId === undefined &&
+      this.clienteId === undefined
     ) {
-      throw new Error('sin cambios para actualizar');
+      throw new Error('No se enviaron datos para actualizar la devolución');
     }
   }
 }
-
 module.exports = UpdateDevolucionDTO;
